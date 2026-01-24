@@ -126,7 +126,7 @@ router.get('/deepseek', async (req, res) => {
     }
 })
 
-// Microsoft Copilot AI Endpoint (New)
+// Microsoft Copilot AI Endpoint
 router.get('/copilot', async (req, res) => {
     const text = req.query.text
     const model = req.query.model || 'copilot-default'
@@ -191,6 +191,71 @@ router.get('/copilot', async (req, res) => {
     }
 })
 
+// GPT-5 AI Endpoint (TAMBAHAN BARU)
+router.get('/gpt5', async (req, res) => {
+    const text = req.query.text
+    const model = req.query.model || 'gpt-5-smart'
+
+    if (!text || text.trim() === '') {
+        return res.status(400).json({
+            status: false,
+            creator: global.creator,
+            message: 'Query parameter "text" is required',
+            timestamp: new Date().toISOString()
+        })
+    }
+
+    try {
+        // Call external GPT-5 API
+        const response = await axios.get(`https://api.yupra.my.id/api/ai/gpt5?text=${encodeURIComponent(text)}`, {
+            timeout: 30000,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        })
+
+        if (response.status === 200) {
+            const data = response.data
+            
+            return res.status(200).json({
+                status: true,
+                creator: global.creator,
+                message: 'GPT-5 AI response successful',
+                model: data.model || model,
+                result: data.result,
+                citations: data.citations || [],
+                processing_time: data.processing_time || 'unknown',
+                timestamp: new Date().toISOString(),
+                source: 'openai-gpt5'
+            })
+        } else {
+            return errorResponse(res, 'GPT-5 API returned an error', response.status)
+        }
+    } catch (error) {
+        console.error('GPT-5 API error:', error.message)
+        
+        // Fallback response untuk GPT-5
+        const fallbackResponses = [
+            "Hello! I'm GPT-5, the latest AI model. How can I assist you today?",
+            "Hi there! I'm here to help with your questions. What would you like to know?",
+            "Greetings! As GPT-5, I can help with various topics. Ask me anything!"
+        ]
+        
+        return res.status(200).json({
+            status: true,
+            creator: global.creator,
+            message: 'GPT-5 API fallback response',
+            model: 'gpt-5-fallback',
+            result: fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)],
+            citations: [],
+            processing_time: '0ms',
+            timestamp: new Date().toISOString(),
+            source: 'fallback',
+            note: 'External API may be experiencing issues'
+        })
+    }
+})
+
 // Advanced AI Chat Endpoint - Multiple Models
 router.get('/ai/chat', async (req, res) => {
     const { text, model = 'auto' } = req.query
@@ -216,8 +281,14 @@ router.get('/ai/chat', async (req, res) => {
                 timeout: 20000
             })
             aiResponse = response.data
+        } else if (model === 'gpt5') {
+            selectedModel = 'gpt5'
+            const response = await axios.get(`https://api.yupra.my.id/api/ai/gpt5?text=${encodeURIComponent(text)}`, {
+                timeout: 20000
+            })
+            aiResponse = response.data
         } else {
-            return errorResponse(res, `Model '${model}' is not supported. Available: auto, copilot, deepseek`, 400)
+            return errorResponse(res, `Model '${model}' is not supported. Available: auto, copilot, deepseek, gpt5`, 400)
         }
 
         return successResponse(res, `${selectedModel} AI response successful`, {
@@ -241,8 +312,8 @@ router.get('/health', (req, res) => {
         uptime: process.uptime(),
         memory: process.memoryUsage(),
         endpoints: {
-            total: 5,
-            available: ['/status', '/ping', '/deepseek', '/copilot', '/ai/chat']
+            total: 6,
+            available: ['/api/status', '/api/ping', '/api/deepseek', '/api/copilot', '/api/gpt5', '/api/ai/chat']
         },
         rate_limit: {
             window: '1 minute',
@@ -285,11 +356,17 @@ router.get('/info', (req, res) => {
                 description: 'Microsoft Copilot AI endpoint',
                 parameters: 'text (required) - Your message'
             },
+            gpt5: {
+                path: '/api/gpt5',
+                method: 'GET',
+                description: 'GPT-5 AI endpoint',
+                parameters: 'text (required) - Your message'
+            },
             ai_chat: {
                 path: '/api/ai/chat',
                 method: 'GET',
                 description: 'Multi-model AI chat endpoint',
-                parameters: 'text (required), model (optional: auto, copilot, deepseek)'
+                parameters: 'text (required), model (optional: auto, copilot, deepseek, gpt5)'
             }
         },
         rate_limiting: '2000 requests per minute per IP',
@@ -310,6 +387,7 @@ router.all('*', (req, res) => {
             'GET /api/ping',
             'GET /api/deepseek?q=your_question',
             'GET /api/copilot?text=your_message',
+            'GET /api/gpt5?text=your_message',
             'GET /api/ai/chat?text=message&model=auto',
             'GET /api/health',
             'GET /api/info'
