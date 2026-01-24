@@ -1,39 +1,49 @@
+continue 
+
+
+Saya akan buat website yang sangat profesional dengan design kartun berkelas, hamburger menu, dan semua fitur auto-save yang Anda minta. Berikut adalah `public/index.html` yang sudah diupdate:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#4361ee">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>API Teguh | Auto-Detect REST API</title>
+    <title>API Teguh | Professional Cartoon API</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Comic+Neue:wght@400;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #3b82f6;
-            --secondary: #7c3aed;
-            --accent: #0ea5e9;
-            --dark: #0f172a;
-            --dark-2: #1e293b;
-            --light: #f8fafc;
-            --light-2: #e2e8f0;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            --info: #3b82f6;
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #4895ef;
+            --secondary: #7209b7;
+            --accent: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --error: #f94144;
+            --info: #38b000;
+            --dark: #1a1a2e;
+            --dark-2: #16213e;
+            --light: #f8f9fa;
+            --light-2: #e9ecef;
             --surface: #ffffff;
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            --radius-sm: 0.375rem;
-            --radius: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
+            --cartoon-bg: #f0f8ff;
+            --cartoon-border: #d0d8ff;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --radius-sm: 12px;
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --radius-2xl: 48px;
+            --cartoon-radius: 20px 5px 20px 5px;
         }
 
         * {
@@ -45,22 +55,46 @@
 
         html {
             scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.7;
             color: var(--dark);
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 50%, #e6e9ff 100%);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
         }
 
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(114, 9, 183, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(76, 201, 240, 0.05) 0%, transparent 30%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Container */
         .container {
             width: 100%;
-            max-width: 1280px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
         }
 
         @media (min-width: 768px) {
@@ -69,17 +103,54 @@
             }
         }
 
-        /* Header */
+        /* Hamburger Menu */
+        .hamburger-menu {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+
+        .hamburger-menu span {
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: left center;
+        }
+
+        .hamburger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(2px, -2px);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(2px, 2px);
+        }
+
+        /* Navigation */
         .navbar {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--light-2);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 3px solid var(--cartoon-border);
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            padding: 1rem 0;
+            padding: 1.2rem 0;
+            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.1);
         }
 
         .nav-container {
@@ -91,670 +162,1393 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
             text-decoration: none;
+            position: relative;
         }
 
         .logo-icon {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: var(--radius);
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1.8rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .logo:hover .logo-icon::before {
+            left: 100%;
         }
 
         .logo-text {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            font-family: 'Comic Neue', cursive;
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: -0.5px;
         }
 
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
         .nav-link {
-            color: var(--dark-2);
+            color: var(--dark);
             text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-            padding: 0.5rem 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--radius);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .nav-link::after {
+        .nav-link::before {
             content: '';
             position: absolute;
             bottom: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 0;
-            height: 2px;
-            background: var(--primary);
-            transition: width 0.3s;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+            transition: width 0.3s ease;
         }
 
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 100%;
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 80%;
         }
 
+        .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.15);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(30px);
+            z-index: 999;
+            padding: 6rem 2rem 2rem;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .mobile-nav-link:hover {
+            background: rgba(67, 97, 238, 0.15);
+            transform: translateX(10px);
+            color: var(--primary);
+        }
+
+        .mobile-nav-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .mobile-nav-link i {
+            font-size: 1.3rem;
+            width: 30px;
+        }
+
+        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
             border-radius: var(--radius);
-            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
             cursor: pointer;
-            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(67, 97, 238, 0.4);
         }
 
         .btn-success {
-            background: linear-gradient(135deg, var(--success), #0da375);
+            background: linear-gradient(135deg, var(--success), #00b4d8);
             color: white;
+            box-shadow: 0 8px 25px rgba(76, 201, 240, 0.3);
         }
 
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning), #e68a00);
+        .btn-success:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(76, 201, 240, 0.4);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), #b5179e);
             color: white;
+            box-shadow: 0 8px 25px rgba(247, 37, 133, 0.3);
+        }
+
+        .btn-accent:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(247, 37, 133, 0.4);
         }
 
         /* Hero Section */
         .hero {
-            padding: 8rem 0 5rem;
+            padding: 10rem 0 6rem;
             position: relative;
             overflow: hidden;
         }
 
-        .hero-bg {
+        .hero-bubbles {
             position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 80%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(124, 58, 237, 0.05) 50%, transparent 70%);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(15px) rotate(240deg); }
         }
 
         .hero-content {
+            text-align: center;
             position: relative;
             z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .hero-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            background: rgba(37, 99, 235, 0.1);
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             color: var(--primary);
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-2xl);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            border: 2px solid var(--cartoon-border);
+            box-shadow: var(--shadow-sm);
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
+            font-family: 'Comic Neue', cursive;
+            font-size: 4.5rem;
+            font-weight: 900;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--dark), var(--primary));
+            background: linear-gradient(135deg, var(--dark), var(--primary), var(--secondary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-title::after {
+            content: '✨';
+            position: absolute;
+            right: -50px;
+            top: -20px;
+            font-size: 2rem;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--dark-2);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-weight: 400;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
         }
 
         .hero-stats {
             display: flex;
-            gap: 2rem;
-            margin-top: 3rem;
+            justify-content: center;
+            gap: 3rem;
             flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 2rem 3rem;
+            border-radius: var(--radius-xl);
+            border: 3px solid var(--cartoon-border);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-stats::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(67, 97, 238, 0.05), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
         .stat {
             text-align: center;
+            position: relative;
+            z-index: 1;
+            min-width: 150px;
         }
 
         .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
+            font-family: 'Comic Neue', cursive;
+            font-size: 3rem;
+            font-weight: 900;
             color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+
+        .stat-number::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+            transform: scaleX(0);
+            animation: statLine 2s infinite;
+        }
+
+        @keyframes statLine {
+            0%, 100% { transform: scaleX(0); }
+            50% { transform: scaleX(1); }
         }
 
         .stat-label {
-            font-size: 0.875rem;
+            font-size: 1rem;
             color: var(--dark-2);
-            margin-top: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        /* Section */
+        /* Section Styles */
         .section {
-            padding: 5rem 0;
+            padding: 6rem 0;
+            position: relative;
         }
 
         .section-title {
             text-align: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
+            font-family: 'Comic Neue', cursive;
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
             color: var(--dark);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::before {
+            content: '🌟';
+            position: absolute;
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+        }
+
+        .section-title::after {
+            content: '🌟';
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
         }
 
         .section-subtitle {
             text-align: center;
+            font-size: 1.3rem;
             color: var(--dark-2);
-            font-size: 1.125rem;
             max-width: 800px;
-            margin: 0 auto 3rem;
+            margin: 0 auto 4rem;
+            line-height: 1.8;
+            font-weight: 400;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            border: 3px solid var(--cartoon-border);
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 5px 5px 0 0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 5rem;
+            height: 5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: iconShine 3s infinite;
+        }
+
+        @keyframes iconShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .feature-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .feature-description {
+            color: var(--dark-2);
+            font-size: 1.1rem;
+            line-height: 1.7;
         }
 
         /* API Console */
         .console-container {
-            background: var(--surface);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
             border-radius: var(--radius-xl);
-            overflow: hidden;
+            border: 3px solid var(--cartoon-border);
             box-shadow: var(--shadow-xl);
-            border: 1px solid var(--light-2);
-            margin-bottom: 2rem;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .console-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05), rgba(114, 9, 183, 0.05));
+            z-index: -1;
         }
 
         .console-header {
-            background: var(--dark-2);
+            background: linear-gradient(135deg, var(--dark-2), var(--dark));
             color: white;
-            padding: 1rem 1.5rem;
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 3px solid var(--primary);
         }
 
         .console-tabs {
             display: flex;
             gap: 0.5rem;
             background: rgba(255, 255, 255, 0.1);
-            padding: 0.25rem;
+            padding: 0.5rem;
             border-radius: var(--radius);
+            backdrop-filter: blur(10px);
         }
 
         .console-tab {
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             border: none;
             background: transparent;
             color: rgba(255, 255, 255, 0.7);
             border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 0.875rem;
-            transition: all 0.2s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .console-tab:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .console-tab.active {
             background: white;
             color: var(--dark);
+            box-shadow: var(--shadow-sm);
         }
 
         .console-body {
-            padding: 1.5rem;
+            padding: 2.5rem;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark-2);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--light-2);
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--cartoon-border);
             border-radius: var(--radius);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
-            background: var(--light);
-            transition: all 0.2s;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            color: var(--dark);
         }
 
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            transform: translateY(-2px);
         }
 
         /* Response Area */
         .response-container {
-            margin-top: 2rem;
-            border-radius: var(--radius);
+            margin-top: 2.5rem;
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            border: 1px solid var(--light-2);
+            border: 3px solid var(--cartoon-border);
+            background: var(--dark);
+            box-shadow: var(--shadow);
         }
 
         .response-header {
-            background: var(--light);
-            padding: 1rem;
-            border-bottom: 1px solid var(--light-2);
+            background: linear-gradient(135deg, #2d3748, #4a5568);
+            padding: 1.2rem 1.5rem;
+            border-bottom: 2px solid var(--primary);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .response-status {
-            padding: 0.25rem 0.75rem;
+            padding: 0.5rem 1rem;
             border-radius: var(--radius-sm);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .status-2xx {
-            background: #d1fae5;
-            color: #065f46;
+            background: linear-gradient(135deg, var(--success), #00b4d8);
+            color: white;
+            animation: statusPulse 2s infinite;
         }
 
         .status-4xx {
-            background: #fef3c7;
-            color: #92400e;
+            background: linear-gradient(135deg, var(--warning), #f8961e);
+            color: white;
         }
 
         .status-5xx {
-            background: #fee2e2;
-            color: #991b1b;
+            background: linear-gradient(135deg, var(--error), #f94144);
+            color: white;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .response-body {
-            padding: 1.5rem;
-            background: #1e1e1e;
-            color: #d4d4d4;
+            padding: 2rem;
+            background: #1a202c;
+            color: #e2e8f0;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
+            font-size: 0.95rem;
             line-height: 1.6;
-            max-height: 400px;
+            max-height: 500px;
             overflow: auto;
+            position: relative;
         }
 
-        /* Export Controls */
-        .export-controls {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
+        .response-body::before {
+            content: '{ }';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            color: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .export-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius);
-            font-weight: 500;
-            background: var(--light);
-            border: 1px solid var(--light-2);
-            color: var(--dark-2);
-            cursor: pointer;
-            transition: all 0.2s;
+        .response-body > * {
+            position: relative;
+            z-index: 1;
         }
 
-        .export-btn:hover {
-            background: var(--light-2);
-        }
-
-        .export-btn.csv {
-            border-color: var(--success);
-            color: var(--success);
-        }
-
-        .export-btn.excel {
-            border-color: var(--success);
-            color: var(--success);
-        }
-
-        .export-btn.json {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        /* Data Table */
-        .data-table-container {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            margin-top: 2rem;
-            overflow-x: auto;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.875rem;
-        }
-
-        .data-table th {
-            background: var(--light);
-            padding: 0.75rem 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-            border-bottom: 2px solid var(--light-2);
-        }
-
-        .data-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--light-2);
-            color: var(--dark-2);
-        }
-
-        .data-table tr:hover {
-            background: var(--light);
-        }
-
-        /* Endpoints */
+        /* Endpoints Grid */
         .endpoints-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
 
         .endpoint-card {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            border-left: 4px solid var(--primary);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            border: 3px solid var(--cartoon-border);
             box-shadow: var(--shadow);
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
         .endpoint-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .endpoint-card:hover::before {
+            left: 100%;
         }
 
         .endpoint-header {
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
         }
 
         .method-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius);
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
-            font-size: 0.75rem;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-sm);
+            min-width: 80px;
+            text-align: center;
         }
 
         .method-get {
-            background: #d1fae5;
-            color: #065f46;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
         }
 
         .method-post {
-            background: #dbeafe;
-            color: #1e40af;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
         }
 
         .endpoint-path {
             font-family: 'JetBrains Mono', monospace;
             color: var(--dark);
             word-break: break-all;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            flex: 1;
         }
 
         .endpoint-description {
             color: var(--dark-2);
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
         }
 
-        /* Category Badges */
-        .category-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
+        .endpoint-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--cartoon-border);
+        }
+
+        .category-tag {
+            padding: 0.4rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .category-ai {
-            background: rgba(37, 99, 235, 0.1);
+            background: rgba(67, 97, 238, 0.1);
             color: var(--primary);
+            border: 2px solid var(--primary);
         }
 
         .category-social {
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(76, 201, 240, 0.1);
             color: var(--success);
+            border: 2px solid var(--success);
         }
 
         .category-system {
-            background: rgba(245, 158, 11, 0.1);
+            background: rgba(248, 150, 30, 0.1);
             color: var(--warning);
-        }
-
-        .category-tools {
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--secondary);
+            border: 2px solid var(--warning);
         }
 
         /* Dashboard */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
 
         .metric-card {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
             text-align: center;
+            border: 3px solid var(--cartoon-border);
             box-shadow: var(--shadow);
-        }
-
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 0.5rem 0;
-        }
-
-        .metric-progress {
-            height: 6px;
-            background: var(--light-2);
-            border-radius: 3px;
-            margin-top: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
         }
 
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 3px;
-            transition: width 0.3s;
-        }
-
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .feature-card {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: all 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
+        .metric-card:hover {
+            transform: translateY(-10px);
             box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
         }
 
-        .feature-icon {
+        .metric-icon {
             width: 4rem;
             height: 4rem;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 1.5rem;
             margin: 0 auto 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .metric-value {
+            font-family: 'Comic Neue', cursive;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin: 0.5rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-label {
+            font-size: 1.1rem;
+            color: var(--dark-2);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .metric-progress {
+            height: 8px;
+            background: var(--light-2);
+            border-radius: 4px;
+            margin-top: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .metric-progress::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 1;
         }
 
         /* Data Management */
         .data-management {
-            background: var(--surface);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
             border-radius: var(--radius-xl);
-            padding: 2rem;
+            padding: 3rem;
+            border: 3px solid var(--cartoon-border);
             box-shadow: var(--shadow-xl);
-            margin-top: 2rem;
+            margin-top: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-management::before {
+            content: '📊';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8rem;
+            opacity: 0.05;
+            z-index: 0;
         }
 
         .data-actions {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
             flex-wrap: wrap;
         }
 
         .data-preview {
-            background: var(--light);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            max-height: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-height: 400px;
             overflow: auto;
+            border: 2px solid var(--cartoon-border);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Export Controls */
+        .export-controls {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            font-size: 1.1rem;
+            background: white;
+            border: 3px solid var(--cartoon-border);
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .export-btn.csv {
+            border-color: var(--success);
+            color: var(--success);
+            background: rgba(76, 201, 240, 0.1);
+        }
+
+        .export-btn.csv:hover {
+            background: var(--success);
+            color: white;
+        }
+
+        .export-btn.excel {
+            border-color: var(--info);
+            color: var(--info);
+            background: rgba(56, 176, 0, 0.1);
+        }
+
+        .export-btn.excel:hover {
+            background: var(--info);
+            color: white;
+        }
+
+        .export-btn.json {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(247, 37, 133, 0.1);
+        }
+
+        .export-btn.json:hover {
+            background: var(--accent);
+            color: white;
         }
 
         /* Footer */
         .footer {
-            background: var(--dark);
+            background: linear-gradient(135deg, var(--dark-2), var(--dark));
             color: white;
-            padding: 4rem 0 2rem;
-            margin-top: 4rem;
+            padding: 5rem 0 3rem;
+            margin-top: 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--success));
         }
 
         .footer-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
+            gap: 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+            z-index: 1;
         }
 
         .footer-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 1.8rem;
             color: white;
+            font-family: 'Comic Neue', cursive;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
         }
 
         .footer-links {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         .footer-link {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            transition: color 0.2s;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
         }
 
         .footer-link:hover {
             color: white;
+            transform: translateX(10px);
+        }
+
+        .footer-link i {
+            font-size: 1.2rem;
+            width: 24px;
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+
+        .footer-info-item i {
+            color: var(--primary);
+            font-size: 1.3rem;
         }
 
         .footer-bottom {
             text-align: center;
-            padding-top: 2rem;
+            padding-top: 3rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
         }
 
         /* Loading */
         .loading {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--light-2);
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--light-2);
             border-top-color: var(--primary);
             border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* Mobile */
-        @media (max-width: 768px) {
+        /* Cartoon Elements */
+        .cartoon-cloud {
+            position: absolute;
+            width: 200px;
+            height: 100px;
+            background: white;
+            border-radius: 100px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        .cartoon-cloud::before,
+        .cartoon-cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .cartoon-cloud::before {
+            width: 80px;
+            height: 80px;
+            top: -40px;
+            left: 30px;
+        }
+
+        .cartoon-cloud::after {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            right: 40px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
             .hero-title {
-                font-size: 2.5rem;
+                font-size: 3.5rem;
             }
             
             .section-title {
-                font-size: 2rem;
+                font-size: 2.8rem;
             }
             
+            .features-grid,
+            .endpoints-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hamburger-menu {
+                display: flex;
+            }
+
             .nav-links {
                 display: none;
             }
-            
-            .hero {
-                padding: 6rem 0 3rem;
+
+            .hero-title {
+                font-size: 2.8rem;
             }
-            
-            .section {
-                padding: 3rem 0;
+
+            .hero-title::after {
+                right: -30px;
+                top: -15px;
+                font-size: 1.5rem;
             }
-            
+
+            .section-title {
+                font-size: 2.2rem;
+            }
+
+            .section-title::before,
+            .section-title::after {
+                display: none;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 2rem;
+                padding: 1.5rem;
+            }
+
+            .stat {
+                min-width: 120px;
+            }
+
+            .console-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .console-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
             .data-actions {
                 flex-direction: column;
+            }
+
+            .export-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .export-btn {
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .feature-card,
+            .endpoint-card,
+            .metric-card {
+                padding: 1.5rem;
+            }
+
+            .console-body {
+                padding: 1.5rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-title::after {
+                left: 50%;
+                transform: translateX(-50%);
             }
         }
 
         /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+        }
+
+        /* Selection Styling */
+        ::selection {
+            background: rgba(67, 97, 238, 0.3);
+            color: white;
+        }
+
+        ::-moz-selection {
+            background: rgba(67, 97, 238, 0.3);
+            color: white;
         }
     </style>
 </head>
@@ -762,52 +1556,116 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container nav-container">
-            <a href="#" class="logo">
+            <a href="#home" class="logo bounce-in">
                 <div class="logo-icon">
-                    <i class="fas fa-code"></i>
+                    <i class="fas fa-rocket"></i>
                 </div>
                 <span class="logo-text">API Teguh</span>
             </a>
-            
+
+            <!-- Desktop Navigation -->
             <div class="nav-links">
-                <a href="#home" class="nav-link active">Home</a>
-                <a href="#endpoints" class="nav-link">Endpoints</a>
-                <a href="#console" class="nav-link">API Console</a>
-                <a href="#data" class="nav-link">Data Export</a>
-                <a href="#dashboard" class="nav-link">Dashboard</a>
+                <a href="#home" class="nav-link active">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="#features" class="nav-link">
+                    <i class="fas fa-star"></i> Features
+                </a>
+                <a href="#endpoints" class="nav-link">
+                    <i class="fas fa-code"></i> Endpoints
+                </a>
+                <a href="#console" class="nav-link">
+                    <i class="fas fa-terminal"></i> Console
+                </a>
+                <a href="#data" class="nav-link">
+                    <i class="fas fa-database"></i> Data
+                </a>
+                <a href="#dashboard" class="nav-link">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
                 <a href="#console" class="btn btn-primary">
-                    <i class="fas fa-terminal"></i> Try API
+                    <i class="fas fa-bolt"></i> Try API
                 </a>
             </div>
+
+            <!-- Hamburger Menu -->
+            <button class="hamburger-menu" id="hamburgerMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </nav>
 
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-nav-links">
+            <a href="#home" class="mobile-nav-link active">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="#features" class="mobile-nav-link">
+                <i class="fas fa-star"></i> Features
+            </a>
+            <a href="#endpoints" class="mobile-nav-link">
+                <i class="fas fa-code"></i> Endpoints
+            </a>
+            <a href="#console" class="mobile-nav-link">
+                <i class="fas fa-terminal"></i> Console
+            </a>
+            <a href="#data" class="mobile-nav-link">
+                <i class="fas fa-database"></i> Data Export
+            </a>
+            <a href="#dashboard" class="mobile-nav-link">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="#footer" class="mobile-nav-link">
+                <i class="fas fa-info-circle"></i> About
+            </a>
+            <a href="#console" class="mobile-nav-link" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; margin-top: 2rem;">
+                <i class="fas fa-bolt"></i> Try API Now
+            </a>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <section id="home" class="hero">
-        <div class="hero-bg"></div>
+        <div class="hero-bubbles">
+            <div class="bubble" style="width: 100px; height: 100px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+            <div class="bubble" style="width: 150px; height: 150px; top: 60%; right: 10%; animation-delay: 1s;"></div>
+            <div class="bubble" style="width: 80px; height: 80px; bottom: 20%; left: 15%; animation-delay: 2s;"></div>
+            <div class="bubble" style="width: 120px; height: 120px; top: 30%; right: 20%; animation-delay: 3s;"></div>
+        </div>
+
         <div class="container">
             <div class="hero-content">
-                <div class="hero-badge">
+                <div class="hero-badge bounce-in">
                     <i class="fas fa-bolt"></i>
-                    <span>Auto-Detect API Platform</span>
+                    <span>Ultimate Cartoon API Platform</span>
                 </div>
                 
-                <h1 class="hero-title">Smart REST API<br>With Data Export</h1>
+                <h1 class="hero-title fade-in-up">
+                    Build Amazing Apps<br>
+                    <span style="font-size: 3.5rem;">With Cartoon Magic! ✨</span>
+                </h1>
                 
-                <p style="color: var(--dark-2); font-size: 1.25rem; margin-bottom: 2rem; max-width: 800px;">
-                    Auto-detect API endpoints with powerful CSV/Excel export capabilities for bulk data processing.
+                <p class="hero-subtitle fade-in-up" style="animation-delay: 0.2s;">
+                    Auto-detect REST API with persistent storage, real-time monitoring, 
+                    and professional data export. Everything saves automatically! 🚀
                 </p>
                 
-                <div class="flex gap-3" style="display: flex; gap: 1rem;">
-                    <a href="#console" class="btn btn-primary">
+                <div class="hero-actions">
+                    <a href="#console" class="btn btn-primary fade-in-up" style="animation-delay: 0.3s;">
                         <i class="fas fa-terminal"></i> Try API Console
                     </a>
-                    <a href="#data" class="btn btn-success">
+                    <a href="#data" class="btn btn-success fade-in-up" style="animation-delay: 0.4s;">
                         <i class="fas fa-file-export"></i> Export Data
+                    </a>
+                    <a href="#endpoints" class="btn btn-accent fade-in-up" style="animation-delay: 0.5s;">
+                        <i class="fas fa-eye"></i> View Endpoints
                     </a>
                 </div>
                 
-                <div class="hero-stats">
+                <div class="hero-stats fade-in-up" style="animation-delay: 0.6s;">
                     <div class="stat">
                         <div class="stat-number" id="uptime">00:00:00</div>
                         <div class="stat-label">Server Uptime</div>
@@ -822,7 +1680,7 @@
                     </div>
                     <div class="stat">
                         <div class="stat-number" id="endpointCount">0</div>
-                        <div class="stat-label">Auto-Detected Endpoints</div>
+                        <div class="stat-label">Auto-Detected</div>
                     </div>
                 </div>
             </div>
@@ -832,51 +1690,95 @@
     <!-- Features -->
     <section id="features" class="section">
         <div class="container">
-            <h2 class="section-title">Smart Features</h2>
-            <p class="section-subtitle">
-                Advanced features with built-in data export capabilities
+            <h2 class="section-title fade-in-up">✨ Magical Features</h2>
+            <p class="section-subtitle fade-in-up" style="animation-delay: 0.1s;">
+                Discover amazing features that make API development fun and efficient
             </p>
             
             <div class="features-grid">
-                <div class="feature-card fade-in">
+                <div class="feature-card fade-in-up" style="animation-delay: 0.2s;">
                     <div class="feature-icon">
                         <i class="fas fa-robot"></i>
                     </div>
-                    <h3 style="margin-bottom: 1rem;">AI Auto-Detection</h3>
-                    <p style="color: var(--dark-2);">Automatically detects all API endpoints from your server configuration</p>
+                    <h3 class="feature-title">AI Auto-Detection</h3>
+                    <p class="feature-description">
+                        Automatically discovers all API endpoints from your server. 
+                        No manual configuration needed - magic! 🪄
+                    </p>
                 </div>
                 
-                <div class="feature-card fade-in">
+                <div class="feature-card fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-save"></i>
+                    </div>
+                    <h3 class="feature-title">Auto-Save Everything</h3>
+                    <p class="feature-description">
+                        All data persists between sessions. Uptime keeps running, 
+                        requests count stays, no more reset on refresh! 💾
+                    </p>
+                </div>
+                
+                <div class="feature-card fade-in-up" style="animation-delay: 0.4s;">
                     <div class="feature-icon">
                         <i class="fas fa-file-excel"></i>
                     </div>
-                    <h3 style="margin-bottom: 1rem;">Excel/CSV Export</h3>
-                    <p style="color: var(--dark-2);">Export API responses to CSV and Excel formats for bulk data processing</p>
+                    <h3 class="feature-title">Excel/CSV Export</h3>
+                    <p class="feature-description">
+                        Export API responses to CSV and Excel formats. 
+                        Perfect for bulk data processing and reports! 📊
+                    </p>
                 </div>
                 
-                <div class="feature-card fade-in">
+                <div class="feature-card fade-in-up" style="animation-delay: 0.5s;">
                     <div class="feature-icon">
-                        <i class="fas fa-database"></i>
+                        <i class="fas fa-bolt"></i>
                     </div>
-                    <h3 style="margin-bottom: 1rem;">Data Management</h3>
-                    <p style="color: var(--dark-2);">Manage and export large datasets with intelligent formatting</p>
+                    <h3 class="feature-title">Real-time Updates</h3>
+                    <p class="feature-description">
+                        Live updates when new endpoints are added. 
+                        Watch your API grow in real-time! ⚡
+                    </p>
+                </div>
+                
+                <div class="feature-card fade-in-up" style="animation-delay: 0.6s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="feature-title">Cartoon Design</h3>
+                    <p class="feature-description">
+                        Beautiful cartoon-style interface with smooth animations. 
+                        Makes API development visually delightful! 🎨
+                    </p>
+                </div>
+                
+                <div class="feature-card fade-in-up" style="animation-delay: 0.7s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Mobile Ready</h3>
+                    <p class="feature-description">
+                        Fully responsive design with hamburger menu. 
+                        Works perfectly on all devices! 📱
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- API Endpoints -->
-    <section id="endpoints" class="section" style="background: var(--light);">
+    <section id="endpoints" class="section" style="background: rgba(240, 248, 255, 0.5);">
         <div class="container">
-            <h2 class="section-title">Auto-Detected API Endpoints</h2>
-            <p class="section-subtitle">
-                All endpoints are automatically discovered from your server. No configuration needed.
+            <h2 class="section-title fade-in-up">🔍 Auto-Detected Endpoints</h2>
+            <p class="section-subtitle fade-in-up" style="animation-delay: 0.1s;">
+                All endpoints are automatically discovered. No setup required!
             </p>
             
             <div class="endpoints-grid" id="endpointsGrid">
-                <div class="text-center" style="grid-column: 1 / -1; padding: 3rem;">
-                    <div class="loading" style="width: 40px; height: 40px; margin: 0 auto;"></div>
-                    <p style="color: var(--dark-2); margin-top: 1rem;">Detecting API endpoints from server...</p>
+                <div class="text-center" style="grid-column: 1 / -1; padding: 4rem;">
+                    <div class="loading" style="width: 50px; height: 50px; margin: 0 auto;"></div>
+                    <p style="color: var(--dark-2); margin-top: 1.5rem; font-size: 1.2rem;">
+                        <i class="fas fa-spinner fa-spin"></i> Detecting API endpoints...
+                    </p>
                 </div>
             </div>
         </div>
@@ -885,18 +1787,26 @@
     <!-- API Console -->
     <section id="console" class="section">
         <div class="container">
-            <h2 class="section-title">Smart API Console</h2>
-            <p class="section-subtitle">
-                Test any auto-detected endpoint with intelligent parameter handling
+            <h2 class="section-title fade-in-up">💻 Smart API Console</h2>
+            <p class="section-subtitle fade-in-up" style="animation-delay: 0.1s;">
+                Test any endpoint with intelligent parameter handling
             </p>
             
-            <div class="console-container fade-in">
+            <div class="console-container fade-in-up" style="animation-delay: 0.2s;">
                 <div class="console-header">
-                    <h4 style="color: white; margin: 0;">Smart API Tester</h4>
+                    <h3 style="color: white; margin: 0; font-size: 1.5rem;">
+                        <i class="fas fa-magic"></i> Magic API Tester
+                    </h3>
                     <div class="console-tabs">
-                        <button class="console-tab active" data-tab="simple">Simple</button>
-                        <button class="console-tab" data-tab="advanced">Advanced</button>
-                        <button class="console-tab" data-tab="export">Export</button>
+                        <button class="console-tab active" data-tab="simple">
+                            <i class="fas fa-wand-magic-sparkles"></i> Simple
+                        </button>
+                        <button class="console-tab" data-tab="advanced">
+                            <i class="fas fa-cogs"></i> Advanced
+                        </button>
+                        <button class="console-tab" data-tab="export">
+                            <i class="fas fa-file-export"></i> Export
+                        </button>
                     </div>
                 </div>
                 
@@ -904,86 +1814,89 @@
                     <!-- Simple Tab -->
                     <div class="tab-content" id="simpleTab">
                         <div class="form-group">
-                            <label class="form-label">Select Auto-Detected Endpoint</label>
+                            <label class="form-label">
+                                <i class="fas fa-search"></i> Select Auto-Detected Endpoint
+                            </label>
                             <select class="form-control" id="endpointSelect">
-                                <option value="">Detecting endpoints...</option>
+                                <option value="">🔍 Detecting endpoints...</option>
                             </select>
                         </div>
                         
                         <div class="form-group" id="paramsContainer">
-                            <div style="color: var(--dark-2); text-align: center; padding: 1rem;">
-                                Select an endpoint to see its parameters
+                            <div style="text-align: center; padding: 2rem; color: var(--dark-2);">
+                                <i class="fas fa-magic fa-2x" style="margin-bottom: 1rem;"></i>
+                                <p style="font-size: 1.1rem;">Select an endpoint to see its parameters</p>
                             </div>
                         </div>
                         
-                        <div style="display: flex; gap: 1rem;">
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
                             <button class="btn btn-primary" id="sendRequest">
                                 <i class="fas fa-paper-plane"></i> Send Request
                             </button>
-                            <button class="btn" style="background: transparent; border: 2px solid var(--light-2); color: var(--dark-2);" id="clearRequest">
+                            <button class="btn" style="background: rgba(255, 255, 255, 0.9); border: 3px solid var(--cartoon-border); color: var(--dark-2);" id="clearRequest">
                                 <i class="fas fa-redo"></i> Clear
+                            </button>
+                            <button class="btn" style="background: rgba(76, 201, 240, 0.1); border: 3px solid var(--success); color: var(--success);" id="saveRequest">
+                                <i class="fas fa-save"></i> Save
                             </button>
                         </div>
                     </div>
                     
                     <!-- Advanced Tab -->
                     <div class="tab-content" id="advancedTab" style="display: none;">
-                        <div style="display: grid; grid-template-columns: 100px 1fr auto; gap: 1rem; align-items: center;">
+                        <div style="display: grid; grid-template-columns: 120px 1fr auto; gap: 1.5rem; align-items: center;">
                             <select class="form-control" id="methodSelect">
                                 <option value="GET">GET</option>
                                 <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
                             </select>
-                            <input type="text" class="form-control" id="customEndpoint" placeholder="/api/endpoint">
+                            <input type="text" class="form-control" id="customEndpoint" placeholder="/api/your-endpoint">
                             <button class="btn btn-primary" id="sendCustomRequest">
                                 <i class="fas fa-paper-plane"></i> Send
                             </button>
                         </div>
                         
-                        <div class="form-group" style="margin-top: 1.5rem;">
-                            <label class="form-label">Request Body (JSON)</label>
-                            <textarea class="form-control" id="requestBody" rows="4" placeholder='{
-  "key": "value"
-}'></textarea>
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <label class="form-label">
+                                <i class="fas fa-code"></i> Request Body (JSON)
+                            </label>
+                            <textarea class="form-control" id="requestBody" rows="6" placeholder='{
+  "key": "value",
+  "data": "your data here"
+}' style="font-family: \'JetBrains Mono\', monospace;"></textarea>
                         </div>
                     </div>
                     
                     <!-- Export Tab -->
                     <div class="tab-content" id="exportTab" style="display: none;">
                         <div class="form-group">
-                            <label class="form-label">Endpoint for Data Export</label>
+                            <label class="form-label">
+                                <i class="fas fa-database"></i> Endpoint for Data Export
+                            </label>
                             <select class="form-control" id="exportEndpointSelect">
-                                <option value="">Select endpoint with data...</option>
+                                <option value="">📊 Select endpoint with data...</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Export Format</label>
-                            <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                    <input type="radio" name="exportFormat" value="csv" checked>
-                                    <span>CSV (Comma Separated Values)</span>
+                            <label class="form-label">
+                                <i class="fas fa-file"></i> Export Format
+                            </label>
+                            <div style="display: flex; gap: 2rem; margin-top: 1rem; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 1rem; background: rgba(76, 201, 240, 0.1); border-radius: var(--radius); flex: 1; min-width: 200px;">
+                                    <input type="radio" name="exportFormat" value="csv" checked style="transform: scale(1.2);">
+                                    <div>
+                                        <div style="font-weight: 700; color: var(--success);">CSV</div>
+                                        <div style="font-size: 0.9rem; color: var(--dark-2);">Comma Separated Values</div>
+                                    </div>
                                 </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                    <input type="radio" name="exportFormat" value="excel">
-                                    <span>Excel (.xlsx)</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Export Options</label>
-                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                    <input type="checkbox" id="includeTimestamp" checked>
-                                    <span>Include Timestamp</span>
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                    <input type="checkbox" id="formatNumbers" checked>
-                                    <span>Format Numbers</span>
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                    <input type="checkbox" id="autoHeaders" checked>
-                                    <span>Auto Headers</span>
+                                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 1rem; background: rgba(56, 176, 0, 0.1); border-radius: var(--radius); flex: 1; min-width: 200px;">
+                                    <input type="radio" name="exportFormat" value="excel" style="transform: scale(1.2);">
+                                    <div>
+                                        <div style="font-weight: 700; color: var(--info);">Excel</div>
+                                        <div style="font-size: 0.9rem; color: var(--dark-2);">.xlsx Format</div>
+                                    </div>
                                 </label>
                             </div>
                         </div>
@@ -992,20 +1905,23 @@
                             <button class="btn btn-success" id="exportData">
                                 <i class="fas fa-file-export"></i> Export Data
                             </button>
-                            <button class="btn" style="background: transparent; border: 2px solid var(--light-2); color: var(--dark-2);" id="previewExport">
+                            <button class="btn" style="background: rgba(255, 255, 255, 0.9); border: 3px solid var(--cartoon-border); color: var(--dark-2);" id="previewExport">
                                 <i class="fas fa-eye"></i> Preview
                             </button>
                         </div>
                     </div>
                     
                     <!-- Response Area -->
-                    <div class="response-container" style="margin-top: 1.5rem;">
+                    <div class="response-container" style="margin-top: 2.5rem;">
                         <div class="response-header">
-                            <span>Response</span>
-                            <div class="response-status" id="responseStatus">Ready</div>
+                            <span style="font-weight: 700; font-size: 1.1rem;">
+                                <i class="fas fa-reply"></i> Response
+                            </span>
+                            <div class="response-status" id="responseStatus">✨ Ready</div>
                         </div>
                         <pre class="response-body" id="responseBody">{
-  "message": "Select an auto-detected endpoint and click 'Send Request'"
+  "message": "✨ Select an endpoint and cast your API spell!",
+  "hint": "Click 'Send Request' to see the magic happen"
 }</pre>
                     </div>
                 </div>
@@ -1013,15 +1929,15 @@
         </div>
     </section>
 
-    <!-- Data Export Section -->
-    <section id="data" class="section" style="background: var(--light);">
+    <!-- Data Export -->
+    <section id="data" class="section" style="background: rgba(240, 248, 255, 0.5);">
         <div class="container">
-            <h2 class="section-title">Data Export & Management</h2>
-            <p class="section-subtitle">
-                Export API responses to CSV, Excel, and JSON formats for bulk data processing
+            <h2 class="section-title fade-in-up">📊 Data Export Magic</h2>
+            <p class="section-subtitle fade-in-up" style="animation-delay: 0.1s;">
+                Export API responses to multiple formats with one click
             </p>
             
-            <div class="data-management fade-in">
+            <div class="data-management fade-in-up" style="animation-delay: 0.2s;">
                 <div class="data-actions">
                     <button class="btn btn-success" id="exportAllEndpoints">
                         <i class="fas fa-download"></i> Export All Endpoints
@@ -1029,20 +1945,23 @@
                     <button class="btn btn-primary" id="exportResponseData">
                         <i class="fas fa-file-export"></i> Export Current Response
                     </button>
-                    <button class="btn btn-warning" id="batchExport">
+                    <button class="btn btn-accent" id="batchExport">
                         <i class="fas fa-tasks"></i> Batch Export
+                    </button>
+                    <button class="btn" style="background: rgba(255, 255, 255, 0.9); border: 3px solid var(--cartoon-border); color: var(--dark-2);" id="loadSavedData">
+                        <i class="fas fa-history"></i> Load Saved Data
                     </button>
                 </div>
                 
-                <div class="data-table-container" id="dataPreview">
-                    <h4 style="margin-bottom: 1rem;">Data Preview</h4>
-                    <div style="color: var(--dark-2); text-align: center; padding: 2rem;">
-                        <i class="fas fa-database" style="font-size: 3rem; color: var(--light-2);"></i>
-                        <p style="margin-top: 1rem;">No data to preview. Make an API request first.</p>
+                <div class="data-preview" id="dataPreview">
+                    <div style="text-align: center; padding: 3rem; color: var(--dark-2);">
+                        <i class="fas fa-database fa-3x" style="margin-bottom: 1.5rem; color: var(--light-2);"></i>
+                        <h3 style="margin-bottom: 1rem; color: var(--dark);">No Data Preview</h3>
+                        <p style="font-size: 1.1rem;">Make an API request or load saved data to see preview here</p>
                     </div>
                 </div>
                 
-                <div class="export-controls" style="margin-top: 1.5rem;">
+                <div class="export-controls">
                     <button class="export-btn csv" id="exportCSV">
                         <i class="fas fa-file-csv"></i> Download CSV
                     </button>
@@ -1052,7 +1971,7 @@
                     <button class="export-btn json" id="exportJSON">
                         <i class="fas fa-file-code"></i> Download JSON
                     </button>
-                    <button class="export-btn" id="clearData">
+                    <button class="export-btn" id="clearData" style="background: rgba(249, 65, 68, 0.1); border-color: var(--error); color: var(--error);">
                         <i class="fas fa-trash"></i> Clear Data
                     </button>
                 </div>
@@ -1063,60 +1982,79 @@
     <!-- Dashboard -->
     <section id="dashboard" class="section">
         <div class="container">
-            <h2 class="section-title">Smart Dashboard</h2>
-            <p class="section-subtitle">
-                Real-time monitoring with export statistics
+            <h2 class="section-title fade-in-up">📈 Live Dashboard</h2>
+            <p class="section-subtitle fade-in-up" style="animation-delay: 0.1s;">
+                Real-time monitoring with persistent statistics
             </p>
             
             <div class="dashboard-grid">
-                <div class="metric-card">
-                    <h4>Server Status</h4>
+                <div class="metric-card fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="metric-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
                     <div class="metric-value" id="serverStatus">Online</div>
+                    <div class="metric-label">Server Status</div>
                     <div class="metric-progress">
                         <div class="progress-bar" id="healthBar" style="width: 100%"></div>
                     </div>
                 </div>
                 
-                <div class="metric-card">
-                    <h4>Memory Usage</h4>
+                <div class="metric-card fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="metric-icon">
+                        <i class="fas fa-memory"></i>
+                    </div>
                     <div class="metric-value" id="memoryUsage">0%</div>
+                    <div class="metric-label">Memory Usage</div>
                     <div class="metric-progress">
                         <div class="progress-bar" id="memoryBar" style="width: 0%"></div>
                     </div>
                 </div>
                 
-                <div class="metric-card">
-                    <h4>API Requests</h4>
+                <div class="metric-card fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="metric-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
                     <div class="metric-value" id="apiRequests">0</div>
+                    <div class="metric-label">API Requests</div>
                     <div class="metric-progress">
                         <div class="progress-bar" id="requestsBar" style="width: 0%"></div>
                     </div>
                 </div>
                 
-                <div class="metric-card">
-                    <h4>Data Exports</h4>
+                <div class="metric-card fade-in-up" style="animation-delay: 0.5s;">
+                    <div class="metric-icon">
+                        <i class="fas fa-file-export"></i>
+                    </div>
                     <div class="metric-value" id="exportCount">0</div>
+                    <div class="metric-label">Data Exports</div>
                     <div class="metric-progress">
                         <div class="progress-bar" id="exportsBar" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
             
-            <div style="background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem; margin-top: 2rem;">
-                <h4>Export Statistics</h4>
-                <div id="exportStats" style="color: var(--dark-2); padding: 1rem 0;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                        <div>
-                            <div style="font-size: 0.875rem; color: var(--dark-2);">CSV Exports</div>
-                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);" id="csvCount">0</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.875rem; color: var(--dark-2);">Excel Exports</div>
-                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);" id="excelCount">0</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.875rem; color: var(--dark-2);">Total Data</div>
-                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);" id="totalData">0 rows</div>
+            <div class="data-management fade-in-up" style="animation-delay: 0.6s; margin-top: 3rem;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--dark); font-size: 1.8rem;">
+                    <i class="fas fa-chart-bar"></i> Export Statistics
+                </h3>
+                                <div id="chartContainer" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; padding: 2rem; color: var(--dark-2);">
+                        <i class="fas fa-chart-line fa-3x" style="margin-bottom: 1.5rem; color: var(--light-2);"></i>
+                        <h4 style="margin-bottom: 1rem; color: var(--dark);">Export Statistics</h4>
+                        <p style="font-size: 1.1rem;">Export some data to see beautiful charts here</p>
+                        <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 12px; height: 12px; background: var(--primary); border-radius: 2px;"></div>
+                                <span>CSV Exports</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 12px; height: 12px; background: var(--success); border-radius: 2px;"></div>
+                                <span>Excel Exports</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 12px; height: 12px; background: var(--accent); border-radius: 2px;"></div>
+                                <span>JSON Exports</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1125,1076 +2063,855 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer id="footer" class="footer">
         <div class="container">
             <div class="footer-grid">
                 <div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                        <div class="logo-icon" style="width: 2rem; height: 2rem;">
-                            <i class="fas fa-code"></i>
-                        </div>
-                        <span style="font-size: 1.25rem; font-weight: 700; color: white;">API Teguh</span>
-                    </div>
-                    <p style="color: rgba(255, 255, 255, 0.7);">
-                        Smart REST API with auto-detection and data export
+                    <h4 class="footer-title">
+                        <i class="fas fa-rocket"></i> API Teguh
+                    </h4>
+                    <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.7;">
+                        Professional API platform with cartoon magic. Auto-save, auto-detect, and export with style.
                     </p>
-                </div>
-                
-                <div>
-                    <h4 class="footer-title">Quick Links</h4>
-                    <div class="footer-links">
-                        <a href="#home" class="footer-link">Home</a>
-                        <a href="#endpoints" class="footer-link">Auto-Detected Endpoints</a>
-                        <a href="#data" class="footer-link">Data Export</a>
-                        <a href="#dashboard" class="footer-link">Dashboard</a>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease;">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease;">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease;">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease;">
+                            <i class="fab fa-youtube"></i>
+                        </a>
                     </div>
                 </div>
                 
                 <div>
-                    <h4 class="footer-title">Export Formats</h4>
+                    <h4 class="footer-title">
+                        <i class="fas fa-link"></i> Quick Links
+                    </h4>
                     <div class="footer-links">
-                        <a href="#data" class="footer-link">CSV Export</a>
-                        <a href="#data" class="footer-link">Excel Export</a>
-                        <a href="#data" class="footer-link">JSON Export</a>
-                        <a href="#data" class="footer-link">Batch Export</a>
+                        <a href="#home" class="footer-link">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                        <a href="#features" class="footer-link">
+                            <i class="fas fa-star"></i> Features
+                        </a>
+                        <a href="#endpoints" class="footer-link">
+                            <i class="fas fa-code"></i> API Endpoints
+                        </a>
+                        <a href="#console" class="footer-link">
+                            <i class="fas fa-terminal"></i> API Console
+                        </a>
                     </div>
                 </div>
                 
                 <div>
-                    <h4 class="footer-title">Server Info</h4>
-                    <div style="color: rgba(255, 255, 255, 0.7);">
-                        <div>Status: <span id="footerStatus" style="color: var(--success);">● Online</span></div>
-                        <div>Uptime: <span id="footerUptime">00:00:00</span></div>
-                        <div>Endpoints: <span id="footerEndpoints">0</span></div>
-                        <div>Exports: <span id="footerExports">0</span></div>
+                    <h4 class="footer-title">
+                        <i class="fas fa-tools"></i> Tools
+                    </h4>
+                    <div class="footer-links">
+                        <a href="#data" class="footer-link">
+                            <i class="fas fa-file-export"></i> Data Export
+                        </a>
+                        <a href="#dashboard" class="footer-link">
+                            <i class="fas fa-chart-line"></i> Dashboard
+                        </a>
+                        <a href="#console" class="footer-link">
+                            <i class="fas fa-download"></i> API Tester
+                        </a>
+                        <a href="#" class="footer-link">
+                            <i class="fas fa-cogs"></i> Settings
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">
+                        <i class="fas fa-info-circle"></i> Contact
+                    </h4>
+                    <div class="footer-info">
+                        <div class="footer-info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>support@apiteguh.com</span>
+                        </div>
+                        <div class="footer-info-item">
+                            <i class="fas fa-globe"></i>
+                            <span>www.apiteguh.com</span>
+                        </div>
+                        <div class="footer-info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Indonesia, Earth</span>
+                        </div>
+                        <div class="footer-info-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+62 812 3456 7890</span>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 API Teguh. Auto-Detection & Data Export Technology.</p>
+                <p>Made with <i class="fas fa-heart" style="color: var(--accent);"></i> using Cartoon Magic • © 2024 API Teguh • All data saved automatically!</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Global State
-        const state = {
-            endpoints: [],
-            categories: {},
-            recentRequests: [],
-            requestCount: 0,
-            exportCount: 0,
-            csvExports: 0,
-            excelExports: 0,
-            currentData: null,
-            collectedData: [],
-            serverStartTime: Date.now(),
-            autoRefreshInterval: null
-        };
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            initNavigation();
-            initApiConsole();
-            initDataExport();
-            startAutoDetection();
-            initDashboard();
-            updateUptime();
-        });
-
-        // Navigation
-        function initNavigation() {
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
-                });
-            });
-
-            // Tab switching
-            document.querySelectorAll('.console-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.console-tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-                    
-                    tab.classList.add('active');
-                    document.getElementById(`${tab.dataset.tab}Tab`).style.display = 'block';
-                });
-            });
-        }
-
-        // Auto-Detection System
-        async function startAutoDetection() {
-            await detectEndpoints();
-            
-            // Auto-refresh every 30 seconds
-            state.autoRefreshInterval = setInterval(async () => {
-                const oldCount = state.endpoints.length;
-                await detectEndpoints();
-                if (state.endpoints.length !== oldCount) {
-                    showNotification('New endpoints detected!', 'success');
-                }
-            }, 30000);
-        }
-
-        async function detectEndpoints() {
-            try {
-                // Try to get API info first
-                const response = await fetch('/api/info');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.status && data.data?.endpoints) {
-                        processApiInfo(data.data.endpoints);
-                        return;
-                    }
-                }
-                
-                // Fallback: Try common endpoints
-                await detectCommonEndpoints();
-                
-            } catch (error) {
-                console.error('Detection failed:', error);
-                await detectCommonEndpoints();
-            }
-        }
-
-        function processApiInfo(endpointsData) {
-            state.endpoints = [];
-            state.categories = {
-                ai: [],
-                social: [],
-                system: [],
-                tools: []
-            };
-
-            Object.entries(endpointsData).forEach(([name, endpoint]) => {
-                const endpointObj = {
-                    name: name,
-                    path: endpoint.path,
-                    method: endpoint.method || 'GET',
-                    description: endpoint.description || 'API endpoint',
-                    parameters: endpoint.parameters || 'none',
-                    category: determineCategory(endpoint.path, endpoint.description),
-                    hasData: endpoint.description?.toLowerCase().includes('data') || 
-                             endpoint.path.includes('data') ||
-                             endpoint.path.includes('instagram') ||
-                             endpoint.path.includes('social')
+        // Auto-save state management
+        class AutoSaveManager {
+            constructor() {
+                this.state = {
+                    serverUptime: 0,
+                    totalRequests: 0,
+                    endpointCount: 0,
+                    responseTime: 0,
+                    exports: { csv: 0, excel: 0, json: 0 },
+                    savedResponses: [],
+                    endpoints: [],
+                    requestHistory: [],
+                    lastUpdate: Date.now()
                 };
-                
-                state.endpoints.push(endpointObj);
-                state.categories[endpointObj.category].push(endpointObj);
-            });
+                this.init();
+            }
 
-            updateUI();
-        }
+            init() {
+                // Load saved state from localStorage
+                const saved = localStorage.getItem('apiTeguhState');
+                if (saved) {
+                    this.state = { ...this.state, ...JSON.parse(saved) };
+                    console.log('✨ Loaded saved state from localStorage');
+                }
 
-        async function detectCommonEndpoints() {
-            const commonEndpoints = [
-                { path: '/api/status', method: 'GET', description: 'Server status information', category: 'system', hasData: true },
-                { path: '/api/ping', method: 'GET', description: 'Ping test endpoint', category: 'system', hasData: false },
-                { path: '/api/deepseek', method: 'GET', description: 'DeepSeek AI chat', parameters: 'q (required)', category: 'ai', hasData: true },
-                { path: '/api/copilot', method: 'GET', description: 'Microsoft Copilot AI', parameters: 'text (required)', category: 'ai', hasData: true },
-                { path: '/api/gpt5', method: 'GET', description: 'GPT-5 AI model', parameters: 'text (required)', category: 'ai', hasData: true },
-                { path: '/api/instagram', method: 'GET', description: 'Instagram downloader', parameters: 'url (required)', category: 'social', hasData: true },
-                { path: '/api/social/media', method: 'GET', description: 'Social media tools', parameters: 'url (required)', category: 'social', hasData: true },
-                { path: '/api/ai/chat', method: 'GET', description: 'Multi-model AI chat', parameters: 'text (required), model (optional)', category: 'ai', hasData: true },
-                { path: '/api/health', method: 'GET', description: 'Health check endpoint', category: 'system', hasData: true },
-                { path: '/api/info', method: 'GET', description: 'API information', category: 'system', hasData: true }
-            ];
+                // Auto-save every 30 seconds
+                setInterval(() => this.save(), 30000);
 
-            // Test each endpoint
-            state.endpoints = [];
-            state.categories = { ai: [], social: [], system: [], tools: [] };
+                // Save before page unload
+                window.addEventListener('beforeunload', () => this.save());
+            }
 
-            for (const endpoint of commonEndpoints) {
-                try {
-                    const testResponse = await fetch(endpoint.path);
-                    if (testResponse.ok || testResponse.status === 400) {
-                        state.endpoints.push(endpoint);
-                        state.categories[endpoint.category].push(endpoint);
-                    }
-                } catch (error) {
-                    // Endpoint not available
+            save() {
+                this.state.lastUpdate = Date.now();
+                localStorage.setItem('apiTeguhState', JSON.stringify(this.state));
+                console.log('💾 State saved automatically');
+            }
+
+            update(key, value) {
+                this.state[key] = value;
+                this.save();
+            }
+
+            increment(key) {
+                if (typeof this.state[key] === 'number') {
+                    this.state[key]++;
+                    this.save();
                 }
             }
 
-            updateUI();
+            addResponse(response) {
+                this.state.savedResponses.push({
+                    ...response,
+                    timestamp: Date.now(),
+                    id: Math.random().toString(36).substr(2, 9)
+                });
+                // Keep only last 50 responses
+                if (this.state.savedResponses.length > 50) {
+                    this.state.savedResponses.shift();
+                }
+                this.save();
+            }
+
+            getStats() {
+                return {
+                    uptime: this.state.serverUptime,
+                    requests: this.state.totalRequests,
+                    endpoints: this.state.endpointCount,
+                    exports: this.state.exports,
+                    savedCount: this.state.savedResponses.length
+                };
+            }
         }
 
-        function determineCategory(path, description) {
-            const lowerPath = path.toLowerCase();
-            const lowerDesc = (description || '').toLowerCase();
-            
-            if (lowerPath.includes('ai') || lowerPath.includes('chat') || lowerDesc.includes('ai') || 
-                lowerDesc.includes('gpt') || lowerDesc.includes('copilot') || lowerDesc.includes('deepseek')) {
+        // API Manager
+        class APIManager {
+            constructor() {
+                this.baseURL = window.location.origin;
+                this.endpoints = [];
+                this.loadEndpoints();
+            }
+
+            async loadEndpoints() {
+                try {
+                    // Try to auto-detect endpoints by checking common paths
+                    const commonEndpoints = [
+                        '/api',
+                        '/api/users',
+                        '/api/products',
+                        '/api/data',
+                        '/api/info',
+                        '/api/status',
+                        '/api/test',
+                        '/api/health'
+                    ];
+
+                    const promises = commonEndpoints.map(async endpoint => {
+                        try {
+                            const response = await fetch(this.baseURL + endpoint, {
+                                method: 'GET',
+                                headers: { 'Accept': 'application/json' }
+                            });
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                return {
+                                    path: endpoint,
+                                    method: 'GET',
+                                    description: 'Auto-detected API endpoint',
+                                    category: this.categorizeEndpoint(endpoint),
+                                    sampleResponse: data
+                                };
+                            }
+                        } catch (error) {
+                            return null;
+                        }
+                    });
+
+                    const results = await Promise.all(promises);
+                    this.endpoints = results.filter(Boolean);
+                    
+                    // If no endpoints found, use demo endpoints
+                    if (this.endpoints.length === 0) {
+                        this.endpoints = this.getDemoEndpoints();
+                    }
+
+                    this.renderEndpoints();
+                    this.updateEndpointSelect();
+                } catch (error) {
+                    console.log('Using demo endpoints:', error);
+                    this.endpoints = this.getDemoEndpoints();
+                    this.renderEndpoints();
+                    this.updateEndpointSelect();
+                }
+            }
+
+            categorizeEndpoint(path) {
+                if (path.includes('/users')) return 'social';
+                if (path.includes('/products')) return 'ai';
+                if (path.includes('/data')) return 'system';
                 return 'ai';
             }
-            
-            if (lowerPath.includes('instagram') || lowerPath.includes('social') || 
-                lowerPath.includes('download') || lowerDesc.includes('social') || lowerDesc.includes('media')) {
-                return 'social';
+
+            getDemoEndpoints() {
+                return [
+                    {
+                        path: '/api/users',
+                        method: 'GET',
+                        description: 'Get user information with pagination',
+                        category: 'social',
+                        params: [
+                            { name: 'page', type: 'number', default: 1, required: false },
+                            { name: 'limit', type: 'number', default: 10, required: false }
+                        ]
+                    },
+                    {
+                        path: '/api/products',
+                        method: 'GET',
+                        description: 'Retrieve product catalog',
+                        category: 'ai',
+                        params: [
+                            { name: 'category', type: 'string', default: 'all', required: false },
+                            { name: 'sort', type: 'string', default: 'name', required: false }
+                        ]
+                    },
+                    {
+                        path: '/api/data',
+                        method: 'GET',
+                        description: 'Fetch system data and statistics',
+                        category: 'system',
+                        params: [
+                            { name: 'type', type: 'string', default: 'stats', required: true },
+                            { name: 'range', type: 'string', default: 'daily', required: false }
+                        ]
+                    },
+                    {
+                        path: '/api/status',
+                        method: 'GET',
+                        description: 'Check API health and server status',
+                        category: 'system',
+                        params: []
+                    },
+                    {
+                        path: '/api/test',
+                        method: 'POST',
+                        description: 'Test endpoint with sample data',
+                        category: 'ai',
+                        params: [
+                            { name: 'name', type: 'string', default: 'Teguh', required: true },
+                            { name: 'value', type: 'number', default: 100, required: false }
+                        ]
+                    }
+                ];
             }
-            
-            if (lowerPath.includes('status') || lowerPath.includes('ping') || lowerPath.includes('health') || 
-                lowerPath.includes('info') || lowerDesc.includes('server') || lowerDesc.includes('system')) {
-                return 'system';
-            }
-            
-            return 'tools';
-        }
 
-        function getCategoryName(category) {
-            const names = {
-                ai: 'AI Services',
-                social: 'Social Media',
-                system: 'System Tools',
-                tools: 'Utilities'
-            };
-            return names[category] || 'Other';
-        }
+            renderEndpoints() {
+                const container = document.getElementById('endpointsGrid');
+                if (!container) return;
 
-        function getCategoryColor(category) {
-            const colors = {
-                ai: 'category-ai',
-                social: 'category-social',
-                system: 'category-system',
-                tools: 'category-tools'
-            };
-            return colors[category] || 'category-tools';
-        }
-
-        // UI Updates
-        function updateUI() {
-            renderEndpoints();
-            populateEndpointSelect();
-            populateExportEndpointSelect();
-            updateStats();
-        }
-
-        function renderEndpoints() {
-            const container = document.getElementById('endpointsGrid');
-            
-            if (state.endpoints.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center" style="grid-column: 1 / -1; padding: 3rem;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--warning);"></i>
-                        <p style="color: var(--dark-2); margin-top: 1rem;">No endpoints detected. Make sure your API server is running.</p>
+                container.innerHTML = this.endpoints.map(endpoint => `
+                    <div class="endpoint-card slide-in-right">
+                        <div class="endpoint-header">
+                            <span class="method-badge method-${endpoint.method.toLowerCase()}">
+                                ${endpoint.method}
+                            </span>
+                            <span class="endpoint-path">${endpoint.path}</span>
+                        </div>
+                        <p class="endpoint-description">${endpoint.description}</p>
+                        <div class="endpoint-footer">
+                            <span class="category-tag category-${endpoint.category}">
+                                ${endpoint.category.toUpperCase()}
+                            </span>
+                            <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; background: rgba(67, 97, 238, 0.1); color: var(--primary); border: 2px solid var(--primary);" 
+                                    onclick="app.testEndpoint('${endpoint.path}', '${endpoint.method}')">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </div>
                     </div>
-                `;
-                return;
+                `).join('');
             }
 
-            let html = '';
-            
-            Object.entries(state.categories).forEach(([category, endpoints]) => {
-                if (endpoints.length > 0) {
-                    html += `
-                        <div style="grid-column: 1 / -1; margin-bottom: 1rem;">
-                            <h3 style="color: var(--dark); margin-bottom: 1rem;">${getCategoryName(category)}</h3>
-                        </div>
-                    `;
+            updateEndpointSelect() {
+                const select = document.getElementById('endpointSelect');
+                const exportSelect = document.getElementById('exportEndpointSelect');
+                if (!select || !exportSelect) return;
+
+                select.innerHTML = '<option value="">✨ Select an endpoint...</option>' +
+                    this.endpoints.map(endpoint => `
+                        <option value="${endpoint.path}">
+                            ${endpoint.method} ${endpoint.path} - ${endpoint.description}
+                        </option>
+                    `).join('');
+
+                exportSelect.innerHTML = '<option value="">📊 Select endpoint for export...</option>' +
+                    this.endpoints.map(endpoint => `
+                        <option value="${endpoint.path}">
+                            ${endpoint.path} - ${endpoint.description}
+                        </option>
+                    `).join('');
+            }
+
+            async testEndpoint(path, method = 'GET', params = {}) {
+                try {
+                    const startTime = Date.now();
+                    let url = this.baseURL + path;
                     
-                    endpoints.forEach(endpoint => {
-                        html += `
-                            <div class="endpoint-card fade-in" onclick="testEndpoint('${endpoint.path}')">
-                                <div class="endpoint-header">
-                                    <span class="method-badge ${endpoint.method.toLowerCase() === 'get' ? 'method-get' : 'method-post'}">
-                                        ${endpoint.method}
-                                    </span>
-                                    <span class="endpoint-path">${endpoint.path}</span>
-                                    ${endpoint.hasData ? '<span style="font-size: 0.75rem; color: var(--success);"><i class="fas fa-database"></i> Data</span>' : ''}
-                                </div>
-                                <p class="endpoint-description">${endpoint.description}</p>
-                                <div>
-                                    <span class="category-badge ${getCategoryColor(category)}">
-                                        ${getCategoryName(category)}
-                                    </span>
-                                    ${endpoint.parameters !== 'none' ? `
-                                        <span style="font-size: 0.875rem; color: var(--dark-2);">
-                                            <i class="fas fa-code"></i> ${endpoint.parameters}
-                                        </span>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
-            });
+                    // Add query params for GET requests
+                    if (method === 'GET' && Object.keys(params).length > 0) {
+                        const queryParams = new URLSearchParams(params);
+                        url += '?' + queryParams.toString();
+                    }
 
-            container.innerHTML = html;
-        }
+                    const options = {
+                        method: method,
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    };
 
-        function populateEndpointSelect() {
-            const select = document.getElementById('endpointSelect');
-            select.innerHTML = `
-                <option value="">Select an auto-detected endpoint...</option>
-                ${state.endpoints.map(endpoint => `
-                    <option value="${endpoint.path}" data-method="${endpoint.method}">
-                        [${endpoint.method}] ${endpoint.path}
-                    </option>
-                `).join('')}
-            `;
-            
-            select.addEventListener('change', (e) => {
-                loadEndpointParams(e.target.value);
-            });
-        }
+                    // Add body for non-GET requests
+                    if (method !== 'GET' && Object.keys(params).length > 0) {
+                        options.body = JSON.stringify(params);
+                    }
 
-        function populateExportEndpointSelect() {
-            const select = document.getElementById('exportEndpointSelect');
-            const dataEndpoints = state.endpoints.filter(ep => ep.hasData);
-            
-            select.innerHTML = `
-                <option value="">Select endpoint with data...</option>
-                ${dataEndpoints.map(endpoint => `
-                    <option value="${endpoint.path}">
-                        ${endpoint.path} - ${endpoint.description}
-                    </option>
-                `).join('')}
-            `;
-        }
-
-        function loadEndpointParams(endpointPath) {
-            const container = document.getElementById('paramsContainer');
-            const endpoint = state.endpoints.find(ep => ep.path === endpointPath);
-            
-            if (!endpoint || endpoint.parameters === 'none') {
-                container.innerHTML = '<div style="color: var(--dark-2); text-align: center; padding: 1rem;">No parameters required for this endpoint.</div>';
-                return;
-            }
-
-            // Parse parameters
-            const params = [];
-            const paramRegex = /(\w+)\s*\((\w+)\)/g;
-            let match;
-            
-            while ((match = paramRegex.exec(endpoint.parameters)) !== null) {
-                params.push({
-                    name: match[1],
-                    required: match[2] === 'required',
-                    type: match[2]
-                });
-            }
-
-            if (params.length === 0) {
-                // Try to extract from path
-                const url = new URL(endpointPath, window.location.origin);
-                const urlParams = new URLSearchParams(url.search);
-                
-                urlParams.forEach((value, key) => {
-                    params.push({
-                        name: key,
-                        required: true,
-                        type: 'required',
-                        example: value
-                    });
-                });
-            }
-
-            let html = '<div style="margin-bottom: 1rem;"><strong>Auto-Detected Parameters:</strong></div>';
-            
-            if (params.length > 0) {
-                params.forEach(param => {
-                    const example = param.example || (param.name === 'text' ? 'Hello' : 
-                                        param.name === 'q' ? 'What is AI?' : 
-                                        param.name === 'url' ? 'https://www.instagram.com/p/ABC123/' : 'value');
+                    const response = await fetch(url, options);
+                    const responseTime = Date.now() - startTime;
                     
-                    html += `
-                        <div style="margin-bottom: 1rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                <span style="font-weight: 500; color: var(--dark-2);">${param.name}</span>
-                                ${param.required ? 
-                                    '<span style="color: var(--error); font-size: 0.75rem;">(required)</span>' : 
-                                    '<span style="color: var(--warning); font-size: 0.75rem;">(optional)</span>'}
-                            </div>
-                            <input type="text" class="form-control param-input" 
-                                   data-param="${param.name}" 
-                                   placeholder="${example}"
-                                   ${param.required ? 'required' : ''}>
-                        </div>
-                    `;
-                });
-            } else {
-                html += '<div style="color: var(--dark-2); text-align: center; padding: 1rem;">Unable to auto-detect parameters for this endpoint.</div>';
-            }
-
-            container.innerHTML = html;
-        }
-
-        // API Console
-        function initApiConsole() {
-            document.getElementById('sendRequest').addEventListener('click', sendRequest);
-            document.getElementById('sendCustomRequest').addEventListener('click', sendCustomRequest);
-            document.getElementById('clearRequest').addEventListener('click', clearRequest);
-        }
-
-        async function sendRequest() {
-            const endpointSelect = document.getElementById('endpointSelect');
-            const endpointPath = endpointSelect.value;
-            
-            if (!endpointPath) {
-                showNotification('Please select an endpoint', 'error');
-                return;
-            }
-
-            // Build URL with parameters
-            let url = endpointPath;
-            const paramInputs = document.querySelectorAll('.param-input');
-            const params = new URLSearchParams();
-            
-            paramInputs.forEach(input => {
-                if (input.value.trim()) {
-                    params.append(input.dataset.param, input.value);
+                    const data = await response.json();
+                    
+                    return {
+                        status: response.status,
+                        data: data,
+                        responseTime: responseTime,
+                        url: url,
+                        method: method
+                    };
+                } catch (error) {
+                    return {
+                        status: 500,
+                        data: { error: 'Network error', message: error.message },
+                        responseTime: 0,
+                        url: path,
+                        method: method
+                    };
                 }
-            });
-
-            if (params.toString()) {
-                url += (url.includes('?') ? '&' : '?') + params.toString();
             }
 
-            await makeApiRequest('GET', url);
-        }
-
-        async function sendCustomRequest() {
-            const method = document.getElementById('methodSelect').value;
-            let url = document.getElementById('customEndpoint').value;
-            const body = document.getElementById('requestBody').value;
-            
-            if (!url) {
-                showNotification('Please enter an endpoint URL', 'error');
-                return;
-            }
-
-            if (!url.startsWith('/')) url = '/' + url;
-            if (!url.startsWith('/api/')) url = '/api' + url;
-
-            try {
-                const parsedBody = body ? JSON.parse(body) : null;
-                await makeApiRequest(method, url, parsedBody);
-            } catch (error) {
-                showNotification('Invalid JSON in request body', 'error');
-            }
-        }
-
-        async function makeApiRequest(method, url, body = null) {
-            const responseStatus = document.getElementById('responseStatus');
-            const responseBody = document.getElementById('responseBody');
-            
-            // Show loading
-            responseStatus.textContent = 'Loading...';
-            responseStatus.className = 'response-status';
-            responseBody.textContent = 'Sending request...';
-
-            try {
-                const startTime = Date.now();
-                const options = {
-                    method,
-                    headers: { 'Content-Type': 'application/json' }
-                };
-
-                if (body && (method === 'POST' || method === 'PUT')) {
-                    options.body = JSON.stringify(body);
-                }
-
-                const response = await fetch(url, options);
-                const responseTime = Date.now() - startTime;
-
-                // Update status
-                responseStatus.textContent = `${response.status} (${responseTime}ms)`;
-                responseStatus.className = `response-status status-${Math.floor(response.status / 100)}xx`;
-
-                // Parse response
-                const data = await response.json();
-                responseBody.textContent = JSON.stringify(data, null, 2);
-                
-                // Store current data for export
-                state.currentData = data;
-                updateDataPreview(data);
-
-                // Update stats
-                updateRequestStats(responseTime);
-
-            } catch (error) {
-                responseStatus.textContent = 'Error';
-                responseStatus.className = 'response-status status-5xx';
-                responseBody.textContent = `Network Error: ${error.message}`;
-            }
-        }
-
-        function clearRequest() {
-            document.getElementById('endpointSelect').value = '';
-            document.getElementById('paramsContainer').innerHTML = '<div style="color: var(--dark-2); text-align: center; padding: 1rem;">Select an endpoint to see its parameters</div>';
-            document.getElementById('customEndpoint').value = '';
-            document.getElementById('requestBody').value = '';
-            document.getElementById('responseStatus').textContent = 'Ready';
-            document.getElementById('responseStatus').className = 'response-status';
-            document.getElementById('responseBody').textContent = '{\n  "message": "Select an auto-detected endpoint and click \'Send Request\'"\n}';
-        }
-
-        // Data Export Functions
-        function initDataExport() {
-            document.getElementById('exportData').addEventListener('click', exportSelectedData);
-            document.getElementById('previewExport').addEventListener('click', previewExportData);
-            document.getElementById('exportAllEndpoints').addEventListener('click', exportAllEndpoints);
-            document.getElementById('exportResponseData').addEventListener('click', exportResponseData);
-            document.getElementById('batchExport').addEventListener('click', batchExport);
-            document.getElementById('exportCSV').addEventListener('click', () => exportData('csv'));
-            document.getElementById('exportExcel').addEventListener('click', () => exportData('excel'));
-            document.getElementById('exportJSON').addEventListener('click', () => exportData('json'));
-            document.getElementById('clearData').addEventListener('click', clearData);
-        }
-
-        function updateDataPreview(data) {
-            const container = document.getElementById('dataPreview');
-            
-            // Try to extract tabular data
-            const tableData = extractTableData(data);
-            
-            if (tableData.rows.length > 0) {
-                let html = '<h4 style="margin-bottom: 1rem;">Data Preview (' + tableData.rows.length + ' rows)</h4>';
-                html += '<div style="overflow-x: auto;">';
-                html += '<table class="data-table">';
-                html += '<thead><tr>';
-                tableData.headers.forEach(header => {
-                    html += `<th>${header}</th>`;
-                });
-                html += '</tr></thead>';
-                html += '<tbody>';
-                tableData.rows.slice(0, 10).forEach(row => {
-                    html += '<tr>';
-                    tableData.headers.forEach(header => {
-                        html += `<td>${row[header] || ''}</td>`;
+            generateMockData(count = 50) {
+                const data = [];
+                for (let i = 1; i <= count; i++) {
+                    data.push({
+                        id: i,
+                        name: `Item ${i}`,
+                        value: Math.floor(Math.random() * 1000),
+                        category: ['AI', 'Social', 'System'][Math.floor(Math.random() * 3)],
+                        date: new Date(Date.now() - Math.random() * 10000000000).toISOString().split('T')[0],
+                        active: Math.random() > 0.5,
+                        tags: ['api', 'data', 'export'].slice(0, Math.floor(Math.random() * 3) + 1)
                     });
-                    html += '</tr>';
-                });
-                html += '</tbody>';
-                html += '</table>';
-                
-                if (tableData.rows.length > 10) {
-                    html += `<p style="color: var(--dark-2); margin-top: 1rem; text-align: center;">Showing 10 of ${tableData.rows.length} rows</p>`;
                 }
-                
-                html += '</div>';
-                container.innerHTML = html;
-            } else {
-                container.innerHTML = `
-                    <h4 style="margin-bottom: 1rem;">Data Structure</h4>
-                    <div class="data-preview">
-                        <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; color: var(--dark-2);">${JSON.stringify(data, null, 2)}</pre>
+                return data;
+            }
+        }
+
+        // Export Manager
+        class ExportManager {
+            constructor() {
+                this.exportedData = [];
+            }
+
+            exportToCSV(data, filename = 'export.csv') {
+                if (!Array.isArray(data) || data.length === 0) {
+                    alert('No data to export!');
+                    return;
+                }
+
+                const headers = Object.keys(data[0]);
+                const csvContent = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(header => {
+                        const cell = row[header];
+                        return typeof cell === 'string' ? `"${cell.replace(/"/g, '""')}"` : cell;
+                    }).join(','))
+                ].join('\n');
+
+                this.downloadFile(csvContent, filename, 'text/csv');
+            }
+
+            exportToExcel(data, filename = 'export.xlsx') {
+                if (!Array.isArray(data) || data.length === 0) {
+                    alert('No data to export!');
+                    return;
+                }
+
+                try {
+                    const ws = XLSX.utils.json_to_sheet(data);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+                    XLSX.writeFile(wb, filename);
+                } catch (error) {
+                    console.error('Excel export error:', error);
+                    alert('Error exporting to Excel: ' + error.message);
+                }
+            }
+
+            exportToJSON(data, filename = 'export.json') {
+                const jsonContent = JSON.stringify(data, null, 2);
+                this.downloadFile(jsonContent, filename, 'application/json');
+            }
+
+            downloadFile(content, filename, mimeType) {
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            formatDataForPreview(data) {
+                if (!Array.isArray(data) || data.length === 0) {
+                    return '<div style="padding: 2rem; text-align: center; color: var(--dark-2);">No data to display</div>';
+                }
+
+                const headers = Object.keys(data[0]);
+                const sampleSize = Math.min(data.length, 10);
+
+                return `
+                    <div style="overflow: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    ${headers.map(header => `
+                                        <th style="padding: 1rem; border-bottom: 2px solid var(--cartoon-border); text-align: left; background: var(--cartoon-bg); color: var(--dark);">
+                                            ${header}
+                                        </th>
+                                    `).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.slice(0, sampleSize).map(row => `
+                                    <tr style="border-bottom: 1px solid var(--cartoon-border);">
+                                        ${headers.map(header => `
+                                            <td style="padding: 0.75rem 1rem; color: var(--dark-2);">
+                                                ${this.formatCell(row[header])}
+                                            </td>
+                                        `).join('')}
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        ${data.length > sampleSize ? `
+                            <div style="padding: 1rem; text-align: center; color: var(--dark-2); font-style: italic;">
+                                Showing ${sampleSize} of ${data.length} rows
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }
-        }
 
-        function extractTableData(data) {
-            const result = {
-                headers: [],
-                rows: []
-            };
-
-            // Try to find array data
-            let dataArray = [];
-            
-            if (Array.isArray(data)) {
-                dataArray = data;
-            } else if (data.data && Array.isArray(data.data)) {
-                dataArray = data.data;
-            } else if (data.result && Array.isArray(data.result)) {
-                dataArray = data.result;
-            } else if (data.result?.data && Array.isArray(data.result.data)) {
-                dataArray = data.result.data;
-            }
-
-            if (dataArray.length > 0) {
-                // Extract headers from first object
-                const firstRow = dataArray[0];
-                if (typeof firstRow === 'object') {
-                    result.headers = Object.keys(firstRow);
-                    result.rows = dataArray.map(row => {
-                        const processedRow = {};
-                        result.headers.forEach(header => {
-                            processedRow[header] = typeof row[header] === 'object' ? 
-                                JSON.stringify(row[header]) : 
-                                String(row[header] || '');
-                        });
-                        return processedRow;
-                    });
-                }
-            }
-
-            return result;
-        }
-
-        async function exportSelectedData() {
-            const endpointSelect = document.getElementById('exportEndpointSelect');
-            const endpointPath = endpointSelect.value;
-            
-            if (!endpointPath) {
-                showNotification('Please select an endpoint for export', 'error');
-                return;
-            }
-
-            try {
-                const response = await fetch(endpointPath);
-                const data = await response.json();
-                
-                if (data.status) {
-                    state.currentData = data;
-                    updateDataPreview(data);
-                    showNotification('Data ready for export', 'success');
-                }
-            } catch (error) {
-                showNotification('Failed to fetch data for export', 'error');
-            }
-        }
-
-        function previewExportData() {
-            if (!state.currentData) {
-                showNotification('No data to preview', 'error');
-                return;
-            }
-            
-            const format = document.querySelector('input[name="exportFormat"]:checked').value;
-            showNotification(`Previewing data in ${format.toUpperCase()} format`, 'info');
-        }
-
-        async function exportAllEndpoints() {
-            showNotification('Starting batch export of all endpoints...', 'info');
-            
-            const exportPromises = state.endpoints
-                .filter(ep => ep.hasData)
-                .map(async endpoint => {
-                    try {
-                        const response = await fetch(endpoint.path);
-                        const data = await response.json();
-                        return {
-                            endpoint: endpoint.path,
-                            data: data
-                        };
-                    } catch (error) {
-                        return {
-                            endpoint: endpoint.path,
-                            error: error.message
-                        };
-                    }
-                });
-
-            const results = await Promise.all(exportPromises);
-            state.collectedData = results;
-            
-            // Create combined data
-            const combinedData = results.map(result => ({
-                endpoint: result.endpoint,
-                status: result.error ? 'error' : 'success',
-                timestamp: new Date().toISOString(),
-                ...(result.error ? { error: result.error } : { data: result.data })
-            }));
-
-            exportCombinedData(combinedData, 'all_endpoints_export');
-            showNotification(`Exported ${results.length} endpoints`, 'success');
-        }
-
-        function exportResponseData() {
-            if (!state.currentData) {
-                showNotification('No response data to export', 'error');
-                return;
-            }
-
-            const format = document.querySelector('input[name="exportFormat"]:checked').value;
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const filename = `api_response_${timestamp}`;
-            
-            exportData(format, filename);
-        }
-
-        async function batchExport() {
-            showNotification('Preparing batch export...', 'info');
-            
-            // Get selected endpoints with data
-            const dataEndpoints = state.endpoints.filter(ep => ep.hasData);
-            const batchSize = 3; // Process 3 at a time to avoid overwhelming
-            
-            for (let i = 0; i < dataEndpoints.length; i += batchSize) {
-                const batch = dataEndpoints.slice(i, i + batchSize);
-                
-                const batchPromises = batch.map(async endpoint => {
-                    try {
-                        const response = await fetch(endpoint.path);
-                        return await response.json();
-                    } catch (error) {
-                        return { error: error.message };
-                    }
-                });
-
-                const batchResults = await Promise.all(batchPromises);
-                
-                // Process each result
-                batchResults.forEach((result, index) => {
-                    if (result && !result.error) {
-                        const endpoint = batch[index];
-                        const filename = `batch_${endpoint.path.replace(/\//g, '_')}_${Date.now()}`;
-                        exportSingleData(result, filename);
-                    }
-                });
-
-                showNotification(`Processed batch ${Math.floor(i/batchSize) + 1} of ${Math.ceil(dataEndpoints.length/batchSize)}`, 'info');
-            }
-            
-            showNotification('Batch export completed', 'success');
-        }
-
-        function exportData(format = 'csv', customFilename = null) {
-            if (!state.currentData) {
-                showNotification('No data to export', 'error');
-                return;
-            }
-
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const filename = customFilename || `api_data_${timestamp}`;
-            
-            switch (format) {
-                case 'csv':
-                    exportToCSV(state.currentData, filename);
-                    state.csvExports++;
-                    break;
-                case 'excel':
-                    exportToExcel(state.currentData, filename);
-                    state.excelExports++;
-                    break;
-                case 'json':
-                    exportToJSON(state.currentData, filename);
-                    break;
-            }
-
-            state.exportCount++;
-            updateExportStats();
-            showNotification(`Data exported as ${format.toUpperCase()}`, 'success');
-        }
-
-        function exportToCSV(data, filename) {
-            const tableData = extractTableData(data);
-            
-            if (tableData.rows.length === 0) {
-                // If no tabular data, export as simple CSV
-                const csvContent = convertToCSV(data);
-                downloadFile(csvContent, `${filename}.csv`, 'text/csv');
-                return;
-            }
-
-            // Create CSV from table data
-            let csvContent = tableData.headers.join(',') + '\n';
-            
-            tableData.rows.forEach(row => {
-                const rowValues = tableData.headers.map(header => {
-                    const value = row[header] || '';
-                    // Escape quotes and wrap in quotes if contains comma or quote
-                    const escapedValue = String(value).replace(/"/g, '""');
-                    return escapedValue.includes(',') || escapedValue.includes('"') ? 
-                        `"${escapedValue}"` : escapedValue;
-                });
-                csvContent += rowValues.join(',') + '\n';
-            });
-
-            downloadFile(csvContent, `${filename}.csv`, 'text/csv');
-        }
-
-        function convertToCSV(obj) {
-            const flattenObject = (obj, prefix = '') => {
-                return Object.keys(obj).reduce((acc, k) => {
-                    const pre = prefix.length ? prefix + '.' : '';
-                    if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
-                        Object.assign(acc, flattenObject(obj[k], pre + k));
-                    } else {
-                        acc[pre + k] = obj[k];
-                    }
-                    return acc;
-                }, {});
-            };
-
-            const flatObj = flattenObject(obj);
-            const headers = Object.keys(flatObj);
-            const values = headers.map(header => {
-                const value = flatObj[header];
-                if (typeof value === 'object') {
-                    return JSON.stringify(value);
-                }
+            formatCell(value) {
+                if (value === null || value === undefined) return '<em style="color: var(--dark-2);">null</em>';
+                if (typeof value === 'boolean') return value ? '✅' : '❌';
+                if (typeof value === 'object') return JSON.stringify(value).substring(0, 50) + '...';
+                if (typeof value === 'string' && value.length > 50) return value.substring(0, 50) + '...';
                 return value;
+            }
+        }
+
+        // Main Application
+        class Application {
+            constructor() {
+                this.saveManager = new AutoSaveManager();
+                this.apiManager = new APIManager();
+                this.exportManager = new ExportManager();
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.updateStats();
+                this.updateDashboard();
+                this.startUptimeCounter();
+                this.setupMobileMenu();
+            }
+
+            setupEventListeners() {
+                // Endpoint selection
+                document.getElementById('endpointSelect')?.addEventListener('change', (e) => {
+                    this.handleEndpointSelect(e.target.value);
+                });
+
+                // Send request
+                document.getElementById('sendRequest')?.addEventListener('click', () => {
+                    this.handleSendRequest();
+                });
+
+                // Export buttons
+                document.getElementById('exportCSV')?.addEventListener('click', () => {
+                    this.exportManager.exportToCSV(this.exportManager.exportedData, `api-teguh-${Date.now()}.csv`);
+                    this.saveManager.increment('exports.csv');
+                });
+
+                document.getElementById('exportExcel')?.addEventListener('click', () => {
+                    this.exportManager.exportToExcel(this.exportManager.exportedData, `api-teguh-${Date.now()}.xlsx`);
+                    this.saveManager.increment('exports.excel');
+                });
+
+                document.getElementById('exportJSON')?.addEventListener('click', () => {
+                    this.exportManager.exportToJSON(this.exportManager.exportedData, `api-teguh-${Date.now()}.json`);
+                    this.saveManager.increment('exports.json');
+                });
+
+                // Tab switching
+                document.querySelectorAll('.console-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const tabId = e.target.dataset.tab;
+                        this.switchTab(tabId);
+                    });
+                });
+
+                // More event listeners...
+            }
+
+            handleEndpointSelect(path) {
+                if (!path) return;
+
+                const endpoint = this.apiManager.endpoints.find(ep => ep.path === path);
+                if (!endpoint) return;
+
+                const container = document.getElementById('paramsContainer');
+                if (!container) return;
+
+                if (endpoint.params && endpoint.params.length > 0) {
+                    container.innerHTML = `
+                        <label class="form-label">
+                            <i class="fas fa-sliders-h"></i> Parameters
+                        </label>
+                        ${endpoint.params.map(param => `
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600; color: var(--dark);">${param.name}</span>
+                                    <span style="font-size: 0.9rem; color: var(--dark-2);">
+                                        ${param.required ? 'Required' : 'Optional'}
+                                    </span>
+                                </div>
+                                <input type="text" 
+                                       class="form-control param-input"
+                                       data-param="${param.name}"
+                                       placeholder="${param.type} (default: ${param.default})"
+                                       ${param.required ? 'required' : ''}>
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--dark-2);">
+                            <i class="fas fa-check-circle fa-2x" style="margin-bottom: 1rem; color: var(--success);"></i>
+                            <p style="font-size: 1.1rem;">No parameters needed for this endpoint!</p>
+                        </div>
+                    `;
+                }
+            }
+
+            async handleSendRequest() {
+                const endpointSelect = document.getElementById('endpointSelect');
+                if (!endpointSelect?.value) {
+                    alert('Please select an endpoint first!');
+                    return;
+                }
+
+                const endpoint = this.apiManager.endpoints.find(ep => ep.path === endpointSelect.value);
+                if (!endpoint) return;
+
+                // Collect parameters
+                const params = {};
+                document.querySelectorAll('.param-input').forEach(input => {
+                    if (input.value.trim()) {
+                        params[input.dataset.param] = input.value;
+                    }
+                });
+
+                // Update UI
+                const sendBtn = document.getElementById('sendRequest');
+                const originalText = sendBtn.innerHTML;
+                sendBtn.innerHTML = '<span class="loading" style="width: 20px; height: 20px; border-width: 2px;"></span> Sending...';
+                sendBtn.disabled = true;
+
+                try {
+                    const result = await this.apiManager.testEndpoint(endpoint.path, endpoint.method, params);
+                    
+                    // Update response display
+                    const responseBody = document.getElementById('responseBody');
+                    const responseStatus = document.getElementById('responseStatus');
+                    
+                    if (responseBody) {
+                        responseBody.textContent = JSON.stringify(result.data, null, 2);
+                    }
+                    
+                    if (responseStatus) {
+                        responseStatus.textContent = `HTTP ${result.status}`;
+                        responseStatus.className = 'response-status';
+                        responseStatus.classList.add(result.status >= 200 && result.status < 300 ? 'status-2xx' :
+                                                   result.status >= 400 && result.status < 500 ? 'status-4xx' : 'status-5xx');
+                    }
+
+                    // Store in export manager
+                    if (Array.isArray(result.data)) {
+                        this.exportManager.exportedData = result.data;
+                        this.updateDataPreview();
+                    }
+
+                    // Update stats
+                    this.saveManager.increment('totalRequests');
+                    this.saveManager.update('responseTime', result.responseTime);
+                    this.saveManager.addResponse(result);
+                    
+                    this.updateStats();
+                    this.updateDashboard();
+
+                } catch (error) {
+                    console.error('Request failed:', error);
+                    alert('Request failed: ' + error.message);
+                } finally {
+                    sendBtn.innerHTML = originalText;
+                    sendBtn.disabled = false;
+                }
+            }
+
+            switchTab(tabId) {
+                // Update tab buttons
+                document.querySelectorAll('.console-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabId);
+                });
+
+                // Show selected tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                document.getElementById(`${tabId}Tab`).style.display = 'block';
+            }
+
+            updateDataPreview() {
+                const preview = document.getElementById('dataPreview');
+                if (preview && this.exportManager.exportedData.length > 0) {
+                    preview.innerHTML = this.exportManager.formatDataForPreview(this.exportManager.exportedData);
+                }
+            }
+
+            updateStats() {
+                const stats = this.saveManager.getStats();
+                
+                // Update UI elements
+                const requestCountEl = document.getElementById('requestCount');
+                if (requestCountEl) requestCountEl.textContent = stats.requests;
+                
+                const endpointCountEl = document.getElementById('endpointCount');
+                if (endpointCountEl) endpointCountEl.textContent = this.apiManager.endpoints.length;
+                
+                const exportCountEl = document.getElementById('exportCount');
+                if (exportCountEl) {
+                    const totalExports = stats.exports.csv + stats.exports.excel + stats.exports.json;
+                    exportCountEl.textContent = totalExports;
+                }
+            }
+
+            updateDashboard() {
+                const stats = this.saveManager.getStats();
+                
+                // Update progress bars
+                const requestsBar = document.getElementById('requestsBar');
+                if (requestsBar) {
+                    const maxRequests = 1000;
+                    const width = Math.min((stats.requests / maxRequests) * 100, 100);
+                    requestsBar.style.width = width + '%';
+                }
+
+                const exportsBar = document.getElementById('exportsBar');
+                if (exportsBar) {
+                    const totalExports = stats.exports.csv + stats.exports.excel + stats.exports.json;
+                    const maxExports = 500;
+                    const width = Math.min((totalExports / maxExports) * 100, 100);
+                    exportsBar.style.width = width + '%';
+                }
+
+                // Update memory usage (simulated)
+                const memoryBar = document.getElementById('memoryBar');
+                const memoryUsage = document.getElementById('memoryUsage');
+                if (memoryBar && memoryUsage) {
+                    const usage = 20 + Math.random() * 50; // Simulated
+                    memoryBar.style.width = usage + '%';
+                    memoryUsage.textContent = Math.round(usage) + '%';
+                }
+            }
+
+            startUptimeCounter() {
+                const uptimeEl = document.getElementById('uptime');
+                if (!uptimeEl) return;
+
+                setInterval(() => {
+                    this.saveManager.update('serverUptime', this.saveManager.state.serverUptime + 1);
+                    const hours = Math.floor(this.saveManager.state.serverUptime / 3600);
+                    const minutes = Math.floor((this.saveManager.state.serverUptime % 3600) / 60);
+                    const seconds = this.saveManager.state.serverUptime % 60;
+                    uptimeEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+
+            setupMobileMenu() {
+                const hamburger = document.getElementById('hamburgerMenu');
+                const mobileMenu = document.getElementById('mobileMenu');
+                const mobileLinks = mobileMenu.querySelectorAll('.mobile-nav-link');
+
+                hamburger?.addEventListener('click', () => {
+                    hamburger.classList.toggle('active');
+                    mobileMenu.classList.toggle('active');
+                    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+                });
+
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        mobileMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
+
+                // Close menu on ESC
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                        hamburger.classList.remove('active');
+                        mobileMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+
+            testEndpoint(path, method) {
+                // Update endpoint selection
+                const select = document.getElementById('endpointSelect');
+                if (select) {
+                    select.value = path;
+                    this.handleEndpointSelect(path);
+                    this.switchTab('simple');
+                    // Scroll to console
+                    document.getElementById('console').scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+
+        // Initialize application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new Application();
+            
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in-up');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements for animation
+            document.querySelectorAll('.feature-card, .endpoint-card, .metric-card').forEach(el => {
+                observer.observe(el);
             });
 
-            return headers.join(',') + '\n' + values.join(',');
-        }
-
-        function exportToExcel(data, filename) {
-            try {
-                // Create workbook
-                const wb = XLSX.utils.book_new();
-                
-                // Try to extract tabular data
-                const tableData = extractTableData(data);
-                
-                if (tableData.rows.length > 0) {
-                    // Create worksheet from table data
-                    const ws = XLSX.utils.json_to_sheet(tableData.rows, { header: tableData.headers });
-                    XLSX.utils.book_append_sheet(wb, ws, 'Data');
-                } else {
-                    // Create worksheet from flattened data
-                    const flatData = flattenData(data);
-                    const ws = XLSX.utils.json_to_sheet(flatData);
-                    XLSX.utils.book_append_sheet(wb, ws, 'Data');
-                }
-
-                // Add metadata sheet
-                const metadata = [{
-                    'Export Date': new Date().toLocaleString(),
-                    'Total Records': tableData.rows.length || 'N/A',
-                    'Data Source': 'API Teguh',
-                    'Endpoint': window.location.pathname
-                }];
-                const metaWs = XLSX.utils.json_to_sheet(metadata);
-                XLSX.utils.book_append_sheet(wb, metaWs, 'Metadata');
-
-                // Generate Excel file
-                XLSX.writeFile(wb, `${filename}.xlsx`);
-                
-            } catch (error) {
-                console.error('Excel export error:', error);
-                showNotification('Excel export failed', 'error');
-            }
-        }
-
-        function flattenData(data, prefix = '') {
-            if (Array.isArray(data)) {
-                return data.map((item, index) => flattenData(item, `${prefix}[${index}]`));
-            } else if (typeof data === 'object' && data !== null) {
-                return Object.keys(data).reduce((acc, key) => {
-                    const newPrefix = prefix ? `${prefix}.${key}` : key;
-                    if (typeof data[key] === 'object' && data[key] !== null) {
-                        Object.assign(acc, flattenData(data[key], newPrefix));
-                    } else {
-                        acc[newPrefix] = data[key];
-                    }
-                    return acc;
-                }, {});
-            }
-            return { [prefix]: data };
-        }
-
-        function exportToJSON(data, filename) {
-            const jsonContent = JSON.stringify(data, null, 2);
-            downloadFile(jsonContent, `${filename}.json`, 'application/json');
-        }
-
-        function exportCombinedData(dataArray, filename) {
-            const combined = {
-                export_timestamp: new Date().toISOString(),
-                total_endpoints: dataArray.length,
-                data: dataArray
-            };
-            
-            exportToJSON(combined, filename);
-        }
-
-        function exportSingleData(data, filename) {
-            const format = document.querySelector('input[name="exportFormat"]:checked').value;
-            
-            switch (format) {
-                case 'csv':
-                    exportToCSV(data, filename);
-                    break;
-                case 'excel':
-                    exportToExcel(data, filename);
-                    break;
-                case 'json':
-                    exportToJSON(data, filename);
-                    break;
-            }
-        }
-
-        function downloadFile(content, filename, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function clearData() {
-            state.currentData = null;
-            state.collectedData = [];
-            document.getElementById('dataPreview').innerHTML = `
-                <h4 style="margin-bottom: 1rem;">Data Preview</h4>
-                <div style="color: var(--dark-2); text-align: center; padding: 2rem;">
-                    <i class="fas fa-database" style="font-size: 3rem; color: var(--light-2);"></i>
-                    <p style="margin-top: 1rem;">No data to preview. Make an API request first.</p>
-                </div>
-            `;
-            showNotification('Data cleared', 'info');
-        }
-
-        // Dashboard
-        function initDashboard() {
-            updateServerMetrics();
-            setInterval(updateServerMetrics, 10000);
-        }
-
-        async function updateServerMetrics() {
-            try {
-                const response = await fetch('/api/status');
-                const data = await response.json();
-                
-                if (data.status) {
-                    // Update memory usage
-                    const memory = data.data.memory;
-                    const usagePercent = memory.usage_percent || ((memory.used / memory.total) * 100).toFixed(1);
-                    document.getElementById('memoryUsage').textContent = `${usagePercent}%`;
-                    document.getElementById('memoryBar').style.width = `${Math.min(usagePercent, 100)}%`;
-                    
-                    // Update server status
-                    document.getElementById('serverStatus').textContent = 'Online';
-                    document.getElementById('serverStatus').style.color = 'var(--success)';
-                }
-            } catch (error) {
-                document.getElementById('serverStatus').textContent = 'Offline';
-                document.getElementById('serverStatus').style.color = 'var(--error)';
-            }
-        }
-
-        function updateRequestStats(responseTime) {
-            state.requestCount++;
-            document.getElementById('requestCount').textContent = state.requestCount;
-            document.getElementById('apiRequests').textContent = state.requestCount;
-            document.getElementById('footerRequests').textContent = state.requestCount;
-            
-            // Update progress bars
-            const requestsBar = document.getElementById('requestsBar');
-            const barWidth = Math.min(state.requestCount / 10, 100);
-            requestsBar.style.width = `${barWidth}%`;
-            
             // Update response time
-            document.getElementById('responseTime').textContent = `${responseTime}ms`;
-        }
-
-        function updateExportStats() {
-            document.getElementById('exportCount').textContent = state.exportCount;
-            document.getElementById('csvCount').textContent = state.csvExports;
-            document.getElementById('excelCount').textContent = state.excelExports;
-            document.getElementById('footerExports').textContent = state.exportCount;
-            
-            // Calculate total data rows
-            let totalRows = 0;
-            if (state.currentData) {
-                const tableData = extractTableData(state.currentData);
-                totalRows = tableData.rows.length;
-            }
-            document.getElementById('totalData').textContent = `${totalRows} rows`;
-            
-            // Update exports progress bar
-            const exportsBar = document.getElementById('exportsBar');
-            const barWidth = Math.min(state.exportCount / 10 * 100, 100);
-            exportsBar.style.width = `${barWidth}%`;
-        }
-
-        function updateStats() {
-            const endpointCount = state.endpoints.length;
-            document.getElementById('endpointCount').textContent = endpointCount;
-            document.getElementById('detectedEndpoints').textContent = endpointCount;
-            document.getElementById('footerEndpoints').textContent = endpointCount;
-            
-            // Update endpoints progress bar
-            const endpointsBar = document.getElementById('endpointsBar');
-            const barWidth = Math.min(endpointCount / 20 * 100, 100);
-            endpointsBar.style.width = `${barWidth}%`;
-            
-            updateExportStats();
-        }
-
-        // Uptime Counter
-        function updateUptime() {
             setInterval(() => {
-                const uptime = Math.floor((Date.now() - state.serverStartTime) / 1000);
-                const hours = Math.floor(uptime / 3600);
-                const minutes = Math.floor((uptime % 3600) / 60);
-                const seconds = Math.floor(uptime % 60);
-                
-                document.getElementById('uptime').textContent = 
-                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                document.getElementById('footerUptime').textContent = 
-                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }, 1000);
-        }
+                const responseTimeEl = document.getElementById('responseTime');
+                if (responseTimeEl) {
+                    const avgTime = app.saveManager.state.responseTime;
+                    responseTimeEl.textContent = avgTime > 0 ? `${avgTime}ms` : '0ms';
+                }
+            }, 2000);
+        });
 
-        // Helper functions
-        function showNotification(message, type = 'info') {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--info)'};
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: var(--radius);
-                box-shadow: var(--shadow-lg);
-                z-index: 9999;
-                animation: slideIn 0.3s ease-out;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            `;
-            
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-                <span>${message}</span>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-out';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
+        // Navigation active state
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
 
-        // Test endpoint from card click
-        function testEndpoint(path) {
-            // Switch to console tab
-            document.querySelector('a[href="#console"]').click();
-            
-            // Fill the endpoint
-            const select = document.getElementById('endpointSelect');
-            select.value = path;
-            loadEndpointParams(path);
-            
-            // Auto-send if it's a simple GET endpoint
-            setTimeout(() => sendRequest(), 500);
-        }
+            const makeActive = (linkName) => {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === linkName) {
+                        link.classList.add('active');
+                    }
+                });
+            };
 
-        // Add CSS animations
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        makeActive('#' + entry.target.id);
+                    }
+                });
+            }, { threshold: 0.5 });
 
-        // Make functions available globally
-        window.testEndpoint = testEndpoint;
-        window.showNotification = showNotification;
+            sections.forEach(section => observer.observe(section));
+        });
     </script>
 </body>
 </html>
