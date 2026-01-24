@@ -191,7 +191,7 @@ router.get('/copilot', async (req, res) => {
     }
 })
 
-// GPT-5 AI Endpoint (TAMBAHAN BARU)
+// GPT-5 AI Endpoint
 router.get('/gpt5', async (req, res) => {
     const text = req.query.text
     const model = req.query.model || 'gpt-5-smart'
@@ -256,6 +256,91 @@ router.get('/gpt5', async (req, res) => {
     }
 })
 
+// Instagram Downloader Endpoint (BARU)
+router.get('/instagram', async (req, res) => {
+    const url = req.query.url
+
+    if (!url || url.trim() === '') {
+        return res.status(400).json({
+            status: false,
+            creator: global.creator,
+            message: 'Query parameter "url" is required',
+            timestamp: new Date().toISOString(),
+            example: '/api/instagram?url=https://www.instagram.com/p/Cxample123/'
+        })
+    }
+
+    // Validasi URL Instagram
+    if (!url.includes('instagram.com')) {
+        return res.status(400).json({
+            status: false,
+            creator: global.creator,
+            message: 'URL must be a valid Instagram link',
+            timestamp: new Date().toISOString(),
+            supported_formats: [
+                'https://www.instagram.com/p/',
+                'https://www.instagram.com/reel/',
+                'https://www.instagram.com/tv/'
+            ]
+        })
+    }
+
+    try {
+        const startTime = Date.now();
+        // Call external Instagram API
+        const response = await axios.get(`https://api.vreden.my.id/api/v1/download/instagram?url=${encodeURIComponent(url)}`, {
+            timeout: 30000,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept': 'application/json',
+                'Referer': 'https://www.instagram.com/'
+            }
+        })
+
+        if (response.status === 200) {
+            const data = response.data
+            const processingTime = Date.now() - startTime;
+            
+            return res.status(200).json({
+                status: true,
+                status_code: 200,
+                creator: global.creator,
+                message: 'Instagram data fetched successfully',
+                processing_time: `${processingTime}ms`,
+                timestamp: new Date().toISOString(),
+                result: data.result || data,
+                metadata: {
+                    url_provided: url,
+                    content_type: data.result?.data?.[0]?.type || 'unknown',
+                    has_video: data.result?.data?.some(item => item.type === 'video') || false,
+                    has_image: data.result?.data?.some(item => item.type === 'image') || false,
+                    total_media: data.result?.data?.length || 0
+                }
+            })
+        } else {
+            return errorResponse(res, 'Instagram API returned an error', response.status)
+        }
+    } catch (error) {
+        console.error('Instagram API error:', error.message)
+        
+        // Fallback response untuk Instagram
+        return res.status(200).json({
+            status: false,
+            status_code: 500,
+            creator: global.creator,
+            message: 'Failed to fetch Instagram data',
+            timestamp: new Date().toISOString(),
+            error: error.message,
+            note: 'Instagram API may be experiencing issues or the URL is invalid',
+            supported_urls: [
+                'Instagram Posts: https://www.instagram.com/p/ABC123/',
+                'Instagram Reels: https://www.instagram.com/reel/ABC123/',
+                'Instagram TV: https://www.instagram.com/tv/ABC123/'
+            ]
+        })
+    }
+})
+
 // Advanced AI Chat Endpoint - Multiple Models
 router.get('/ai/chat', async (req, res) => {
     const { text, model = 'auto' } = req.query
@@ -304,6 +389,54 @@ router.get('/ai/chat', async (req, res) => {
     }
 })
 
+// Social Media Tools Endpoint (BARU)
+router.get('/social/media', async (req, res) => {
+    const { url, platform = 'auto' } = req.query
+
+    if (!url || url.trim() === '') {
+        return errorResponse(res, 'Query parameter "url" is required', 400)
+    }
+
+    try {
+        let result
+        let detectedPlatform = platform
+
+        // Auto-detect platform dari URL
+        if (platform === 'auto') {
+            if (url.includes('instagram.com')) {
+                detectedPlatform = 'instagram'
+            } else if (url.includes('tiktok.com')) {
+                detectedPlatform = 'tiktok'
+            } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                detectedPlatform = 'youtube'
+            } else if (url.includes('twitter.com') || url.includes('x.com')) {
+                detectedPlatform = 'twitter'
+            } else {
+                detectedPlatform = 'unknown'
+            }
+        }
+
+        if (detectedPlatform === 'instagram') {
+            const response = await axios.get(`https://api.vreden.my.id/api/v1/download/instagram?url=${encodeURIComponent(url)}`, {
+                timeout: 30000
+            })
+            result = response.data
+        } else {
+            return errorResponse(res, `Platform '${detectedPlatform}' is not supported yet. Currently only Instagram is supported.`, 400)
+        }
+
+        return successResponse(res, `${detectedPlatform} data fetched successfully`, {
+            platform: detectedPlatform,
+            url: url,
+            result: result.result || result,
+            supported_features: ['download', 'metadata', 'statistics']
+        })
+    } catch (error) {
+        console.error('Social Media endpoint error:', error.message)
+        return errorResponse(res, 'Failed to fetch social media data')
+    }
+})
+
 // Health Check Endpoint
 router.get('/health', (req, res) => {
     const healthData = {
@@ -312,8 +445,17 @@ router.get('/health', (req, res) => {
         uptime: process.uptime(),
         memory: process.memoryUsage(),
         endpoints: {
-            total: 6,
-            available: ['/api/status', '/api/ping', '/api/deepseek', '/api/copilot', '/api/gpt5', '/api/ai/chat']
+            total: 8,
+            available: [
+                '/api/status',
+                '/api/ping',
+                '/api/deepseek',
+                '/api/copilot',
+                '/api/gpt5',
+                '/api/instagram',
+                '/api/social/media',
+                '/api/ai/chat'
+            ]
         },
         rate_limit: {
             window: '1 minute',
@@ -327,10 +469,10 @@ router.get('/health', (req, res) => {
 // API Information Endpoint
 router.get('/info', (req, res) => {
     const apiInfo = {
-        name: 'Advanced REST API Server',
-        version: '2.0.0',
+        name: 'API Teguh - Advanced REST API Server',
+        version: '3.1.0',
         creator: global.creator,
-        description: 'Multi-model AI API server with various endpoints',
+        description: 'Multi-model AI API server with social media tools',
         endpoints: {
             status: {
                 path: '/api/status',
@@ -362,6 +504,18 @@ router.get('/info', (req, res) => {
                 description: 'GPT-5 AI endpoint',
                 parameters: 'text (required) - Your message'
             },
+            instagram: {
+                path: '/api/instagram',
+                method: 'GET',
+                description: 'Instagram downloader and metadata',
+                parameters: 'url (required) - Instagram post/reel URL'
+            },
+            social_media: {
+                path: '/api/social/media',
+                method: 'GET',
+                description: 'Social media tools (Instagram support)',
+                parameters: 'url (required), platform (optional: auto, instagram)'
+            },
             ai_chat: {
                 path: '/api/ai/chat',
                 method: 'GET',
@@ -369,6 +523,13 @@ router.get('/info', (req, res) => {
                 parameters: 'text (required), model (optional: auto, copilot, deepseek, gpt5)'
             }
         },
+        features: [
+            'AI Chat with multiple models',
+            'Instagram downloader',
+            'Social media metadata',
+            'Server monitoring',
+            'Rate limiting'
+        ],
         rate_limiting: '2000 requests per minute per IP',
         documentation: 'Visit / on your browser for full documentation'
     }
@@ -388,6 +549,8 @@ router.all('*', (req, res) => {
             'GET /api/deepseek?q=your_question',
             'GET /api/copilot?text=your_message',
             'GET /api/gpt5?text=your_message',
+            'GET /api/instagram?url=instagram_url',
+            'GET /api/social/media?url=social_media_url',
             'GET /api/ai/chat?text=message&model=auto',
             'GET /api/health',
             'GET /api/info'
