@@ -1,1 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Server Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+            position: relative;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 15px;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            font-size: 1.6rem;
+        }
+
+        .endpoint-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .endpoint {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .endpoint:hover {
+            border-left-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .endpoint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .method {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .endpoint h3 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .endpoint p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .features-list li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #dee2e6;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .status {
+            background: #e8f4fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .quick-link {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #667eea;
+            font-size: 0.9rem;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .quick-link:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 API Server Teguh</h1>
+            <p>Advanced REST API Server dengan Multi-Model AI dan Social Media Tools</p>
+            <div class="badge">Version 3.2.0 | Status: ONLINE</div>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2>📊 API Endpoints</h2>
+                <div class="endpoint-list">
+                    <div class="endpoint" onclick="navigateToEndpoint('/api/deepseek')">
+                        <div class="endpoint-header">
+                            <span class="method">GET</span>
+                        </div>
+                        <h3>/api/deepseek</h3>
+                        <p>Deepseek AI chat endpoint</p>
+                        <small>Parameter: q (required)</small>
+                    </div>
+
+                    <div class="endpoint" onclick="navigateToEndpoint('/api/copilot')">
+                        <div class="endpoint-header">
+                            <span class="method">GET</span>
+                        </div>
+                        <h3>/api/copilot</h3>
+                        <p>Microsoft Copilot AI endpoint</p>
+                        <small>Parameter: text (required)</small>
+                    </div>
+
+                    <div class="endpoint" onclick="navigateToEndpoint('/api/instagram')">
+                        <div class="endpoint-header">
+                            <span class="method">GET</span>
+                        </div>
+                        <h3>/api/instagram</h3>
+                        <p>Instagram downloader and metadata</p>
+                        <small>Parameter: url (required)</small>
+                    </div>
+
+                    <div class="endpoint" onclick="navigateToEndpoint('/api/facebook')">
+                        <div class="endpoint-header">
+                            <span class="method">GET</span>
+                        </div>
+                        <h3>/api/facebook</h3>
+                        <p>Facebook video downloader</p>
+                        <small>Parameter: url (required)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>✨ Fitur Unggulan</h2>
+                <ul class="features-list">
+                    <li>AI Chat dengan multiple models (Deepseek, Copilot, GPT-5)</li>
+                    <li>Instagram video/photo downloader</li>
+                    <li>Facebook video downloader</li>
+                    <li>Social media metadata extraction</li>
+                    <li>Unified video download endpoint</li>
+                    <li>Server monitoring & health check</li>
+                    <li>Rate limiting (2000 requests/min)</li>
+                    <li>Auto-detection platform</li>
+                </ul>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number">10+</span>
+                        <span class="stat-label">Endpoints</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">AI Models</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">Social Media</span>
+                    </div>
+                </div>
+
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <span>Server status: Running normally</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" style="margin: 0 40px 40px;">
+            <h2>🚀 Quick Actions</h2>
+            <div class="quick-links">
+                <a href="/dashboard.html" class="quick-link">📊 Dashboard Live</a>
+                <a href="/api/health" class="quick-link">🩺 Health Check</a>
+                <a href="/api/info" class="quick-link">ℹ️ API Info</a>
+                <a href="/api/status" class="quick-link">📈 Server Status</a>
+                <a href="#test-api" class="quick-link">🧪 Test API</a>
+                <a href="https://github.com" class="quick-link">📚 Documentation</a>
+            </div>
+
+            <div class="buttons">
+                <a href="/dashboard.html" class="btn btn-primary">
+                    <span>📊 Open Live Dashboard</span>
+                </a>
+                <button onclick="showAPITester()" class="btn btn-secondary">
+                    <span>🧪 Test API Now</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 API Server Teguh | Created with ❤️ | Version 3.2.0</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
+                Response Format: JSON | Rate Limit: 2000 req/min | Uptime: 99.9%
+            </p>
+        </div>
+    </div>
+
+    <div id="api-tester" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 1000; max-width: 500px; width: 90%;">
+        <h3 style="margin-bottom: 20px; color: #2c3e50;">🧪 API Tester</h3>
+        <select id="endpoint-select" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px;">
+            <option value="/api/deepseek?q=">/api/deepseek?q=</option>
+            <option value="/api/copilot?text=">/api/copilot?text=</option>
+            <option value="/api/gpt5?text=">/api/gpt5?text=</option>
+            <option value="/api/instagram?url=">/api/instagram?url=</option>
+            <option value="/api/facebook?url=">/api/facebook?url=</option>
+        </select>
+        <input type="text" id="api-param" placeholder="Enter parameter value..." style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px;">
+        <button onclick="testAPI()" style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 15px;">Test API</button>
+        <button onclick="hideAPITester()" style="width: 100%; padding: 12px; background: #f8f9fa; color: #333; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">Close</button>
+        <div id="api-result" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; display: none;"></div>
+    </div>
+
+    <script>
+        function navigateToEndpoint(endpoint) {
+            window.location.href = endpoint;
+        }
+
+        function showAPITester() {
+            document.getElementById('api-tester').style.display = 'block';
+        }
+
+        function hideAPITester() {
+            document.getElementById('api-tester').style.display = 'none';
+            document.getElementById('api-result').style.display = 'none';
+        }
+
+        function testAPI() {
+            const endpoint = document.getElementById('endpoint-select').value;
+            const param = document.getElementById('api-param').value;
+            
+            if (!param.trim()) {
+                alert('Please enter a parameter value');
+                return;
+            }
+
+            const url = endpoint + encodeURIComponent(param);
+            const resultDiv = document.getElementById('api-result');
+            
+            resultDiv.innerHTML = '<p style="color: #667eea;">Testing API... Please wait</p>';
+            resultDiv.style.display = 'block';
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    resultDiv.innerHTML = `
+                        <p style="color: #28a745; font-weight: bold;">✓ API Response Received</p>
+                        <pre style="background: white; padding: 10px; border-radius: 5px; overflow: auto; max-height: 200px;">${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = `
+                        <p style="color: #dc3545; font-weight: bold;">✗ API Error</p>
+                        <pre style="background: white; padding: 10px; border-radius: 5px; overflow: auto; max-height: 200px;">${error}</pre>
+                    `;
+                });
+        }
+
+        // Check server status on load
+        fetch('/api/ping')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    console.log('Server is responsive');
+                }
+            })
+            .catch(error => {
+                console.log('Server check failed:', error);
+            });
+
+        // Close tester when clicking outside
+        document.addEventListener('click', function(event) {
+            const tester = document.getElementById('api-tester');
+            if (event.target === tester) {
+                hideAPITester();
+            }
+        });
+    </script>
+</body>
+</html>
