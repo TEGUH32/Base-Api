@@ -5,7 +5,7 @@ let logger = require('morgan')
 let indexRouter = require('./routes/index') // Router for root (/) routes
 let apiRouter = require('./routes/api') // Router for /api endpoints
 const rateLimit = require("express-rate-limit") // Middleware for rate limiting
-let PORT = 3000 || 8000
+let PORT = 8000 || 8000
 
 const app = express() 
 
