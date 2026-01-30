@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
+const { v4: uuidv4 } = require('uuid');
 const database = require('../database');
 const { authenticateToken } = require('../middleware/auth');
 
@@ -12,11 +13,19 @@ const generateToken = (user) => {
         {
             id: user.id,
             email: user.email,
-            plan: user.plan
+            plan: user.plan || 'free'
         },
         process.env.JWT_SECRET || 'your-jwt-secret-key-change-this-in-production',
         { expiresIn: process.env.JWT_EXPIRES_IN || '30d' }
     );
+};
+
+// Generate API Key
+const generateApiKey = () => {
+    const crypto = require('crypto');
+    const randomPart = crypto.randomBytes(16).toString('hex');
+    const timestamp = Date.now().toString(36);
+    return `sk-${randomPart}-${timestamp}`;
 };
 
 // Generate session ID
@@ -52,42 +61,78 @@ router.post('/register', [
             });
         }
 
-        // Create new user (auto-verified, no email verification)
-        const user = await database.createUser(email, password, full_name || email.split('@')[0]);
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const userId = uuidv4();
+        const now = new Date().toISOString();
 
+        // Create new user
+        const user = {
+            id: userId,
+            email: email.toLowerCase().trim(),
+            password: hashedPassword,
+            full_name: full_name || email.split('@')[0],
+            plan: 'free',
+            is_verified: 1,
+            is_active: 1,
+            created_at: now,
+            updated_at: now
+        };
+
+        // Save user to database
+        const savedUser = await database.createUser(user);
+
+        // Generate API key
+        const apiKeyValue = generateApiKey();
+        const apiKeyId = uuidv4();
+        
         // Create default API key for new user
-        const apiKey = await database.createApiKey(user.id, 'Default API Key', 365);
+        const apiKey = {
+            id: apiKeyId,
+            user_id: userId,
+            key_value: apiKeyValue,
+            name: 'Default API Key',
+            daily_limit: 100,
+            requests_today: 0,
+            is_active: 1,
+            expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year
+            created_at: now
+        };
+
+        await database.createApiKey(apiKey);
 
         // Generate JWT token
-        const token = generateToken(user);
+        const token = generateToken(savedUser);
 
         // Create session
         const sessionId = generateSessionId();
-        await database.createSession(
-            sessionId,
-            user.id,
-            req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-            req.get('user-agent') || 'Unknown'
-        );
+        await database.createSession({
+            id: sessionId,
+            user_id: userId,
+            ip_address: req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+            user_agent: req.get('user-agent') || 'Unknown',
+            created_at: now
+        });
 
         res.status(201).json({
             status: true,
             message: 'Registration successful! Welcome to API Teguh.',
             data: {
                 user: {
-                    id: user.id,
-                    email: user.email,
-                    full_name: user.fullName || user.full_name,
-                    plan: user.plan || 'free',
-                    is_verified: true,
-                    created_at: user.created_at || new Date().toISOString()
+                    id: savedUser.id,
+                    email: savedUser.email,
+                    full_name: savedUser.full_name,
+                    plan: savedUser.plan,
+                    is_verified: savedUser.is_verified === 1,
+                    is_active: savedUser.is_active === 1,
+                    created_at: savedUser.created_at
                 },
                 token,
                 session_id: sessionId,
-                api_key: apiKey.key_value || apiKey.key,
+                api_key: apiKeyValue,
                 api_key_info: {
                     name: apiKey.name,
-                    daily_limit: apiKey.daily_limit || 100,
+                    daily_limit: apiKey.daily_limit,
                     expires_at: apiKey.expires_at
                 }
             }
@@ -130,7 +175,7 @@ router.post('/login', [
         }
 
         // Check if user is active
-        if (!user.is_active) {
+        if (user.is_active !== 1) {
             return res.status(401).json({
                 status: false,
                 message: 'Account is deactivated. Please contact support.'
@@ -151,16 +196,17 @@ router.post('/login', [
 
         // Create session
         const sessionId = generateSessionId();
-        await database.createSession(
-            sessionId,
-            user.id,
-            req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-            req.get('user-agent') || 'Unknown'
-        );
+        await database.createSession({
+            id: sessionId,
+            user_id: user.id,
+            ip_address: req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+            user_agent: req.get('user-agent') || 'Unknown',
+            created_at: new Date().toISOString()
+        });
 
         // Get user's API keys
         const apiKeys = await database.getUserApiKeys(user.id);
-        const primaryApiKey = apiKeys.find(key => key.is_active) || apiKeys[0];
+        const primaryApiKey = apiKeys.find(key => key.is_active === 1) || apiKeys[0];
 
         res.status(200).json({
             status: true,
@@ -171,8 +217,8 @@ router.post('/login', [
                     email: user.email,
                     full_name: user.full_name,
                     plan: user.plan,
-                    is_verified: true,
-                    is_active: user.is_active,
+                    is_verified: user.is_verified === 1,
+                    is_active: user.is_active === 1,
                     created_at: user.created_at
                 },
                 token,
@@ -182,7 +228,7 @@ router.post('/login', [
                     id: primaryApiKey.id,
                     name: primaryApiKey.name,
                     daily_limit: primaryApiKey.daily_limit,
-                    requests_today: primaryApiKey.requests_today,
+                    requests_today: primaryApiKey.requests_today || 0,
                     expires_at: primaryApiKey.expires_at
                 } : null
             }
@@ -227,9 +273,18 @@ router.get('/me', authenticateToken, async (req, res) => {
     try {
         const user = req.user;
         
+        // Get fresh user data from database
+        const freshUser = await database.findUserById(user.id);
+        if (!freshUser) {
+            return res.status(404).json({
+                status: false,
+                message: 'User not found'
+            });
+        }
+
         // Get user's API keys
         const apiKeys = await database.getUserApiKeys(user.id);
-        const primaryApiKey = apiKeys.find(key => key.is_active) || apiKeys[0];
+        const primaryApiKey = apiKeys.find(key => key.is_active === 1) || apiKeys[0];
         
         // Get user's usage stats for today
         const usageStats = await database.getUserUsageStats(user.id, 1);
@@ -239,19 +294,19 @@ router.get('/me', authenticateToken, async (req, res) => {
             status: true,
             data: {
                 user: {
-                    id: user.id,
-                    email: user.email,
-                    full_name: user.full_name,
-                    plan: user.plan,
-                    is_verified: user.is_verified,
-                    is_active: user.is_active,
-                    created_at: user.created_at
+                    id: freshUser.id,
+                    email: freshUser.email,
+                    full_name: freshUser.full_name,
+                    plan: freshUser.plan,
+                    is_verified: freshUser.is_verified === 1,
+                    is_active: freshUser.is_active === 1,
+                    created_at: freshUser.created_at
                 },
                 api_key: primaryApiKey ? {
                     key: primaryApiKey.key_value,
                     name: primaryApiKey.name,
                     daily_limit: primaryApiKey.daily_limit,
-                    requests_today: primaryApiKey.requests_today,
+                    requests_today: primaryApiKey.requests_today || 0,
                     expires_at: primaryApiKey.expires_at
                 } : null,
                 usage: {
@@ -274,7 +329,17 @@ router.get('/me', authenticateToken, async (req, res) => {
 // Refresh token
 router.post('/refresh', authenticateToken, async (req, res) => {
     try {
-        const newToken = generateToken(req.user);
+        const user = req.user;
+        // Get fresh user data
+        const freshUser = await database.findUserById(user.id);
+        if (!freshUser) {
+            return res.status(404).json({
+                status: false,
+                message: 'User not found'
+            });
+        }
+
+        const newToken = generateToken(freshUser);
 
         res.status(200).json({
             status: true,
@@ -310,7 +375,18 @@ router.put('/profile', authenticateToken, [
         const { full_name, current_password, new_password } = req.body;
         const userId = req.user.id;
 
-        let updateData = {};
+        // Get current user with password
+        const user = await database.findUserById(userId);
+        if (!user) {
+            return res.status(404).json({
+                status: false,
+                message: 'User not found'
+            });
+        }
+
+        const updateData = {
+            updated_at: new Date().toISOString()
+        };
 
         // Update full name
         if (full_name) {
@@ -319,9 +395,6 @@ router.put('/profile', authenticateToken, [
 
         // Update password if both current and new passwords are provided
         if (current_password && new_password) {
-            // Get current user with password
-            const user = await database.findUserById(userId);
-            
             // Verify current password
             const isPasswordValid = await bcrypt.compare(current_password, user.password);
             if (!isPasswordValid) {
@@ -338,60 +411,21 @@ router.put('/profile', authenticateToken, [
 
         // Update user in database
         if (Object.keys(updateData).length > 0) {
-            const client = await database.pool.connect();
-            try {
-                await client.query('BEGIN');
+            const updatedUser = await database.updateUser(userId, updateData);
 
-                const updateFields = [];
-                const updateValues = [];
-                let paramIndex = 1;
-
-                for (const [key, value] of Object.entries(updateData)) {
-                    updateFields.push(`${key} = $${paramIndex}`);
-                    updateValues.push(value);
-                    paramIndex++;
-                }
-
-                // Add updated_at timestamp
-                updateFields.push('updated_at = CURRENT_TIMESTAMP');
-                updateValues.push(userId);
-
-                const updateQuery = `
-                    UPDATE users 
-                    SET ${updateFields.join(', ')}
-                    WHERE id = $${paramIndex}
-                    RETURNING id, email, full_name, plan, is_verified, created_at
-                `;
-
-                const result = await client.query(updateQuery, updateValues);
-                await client.query('COMMIT');
-
-                if (result.rows.length === 0) {
-                    throw new Error('User not found');
-                }
-
-                const updatedUser = result.rows[0];
-
-                res.status(200).json({
-                    status: true,
-                    message: 'Profile updated successfully',
-                    data: {
-                        user: {
-                            id: updatedUser.id,
-                            email: updatedUser.email,
-                            full_name: updatedUser.full_name,
-                            plan: updatedUser.plan,
-                            is_verified: updatedUser.is_verified
-                        }
+            res.status(200).json({
+                status: true,
+                message: 'Profile updated successfully',
+                data: {
+                    user: {
+                        id: updatedUser.id,
+                        email: updatedUser.email,
+                        full_name: updatedUser.full_name,
+                        plan: updatedUser.plan,
+                        is_verified: updatedUser.is_verified === 1
                     }
-                });
-
-            } catch (error) {
-                await client.query('ROLLBACK');
-                throw error;
-            } finally {
-                client.release();
-            }
+                }
+            });
         } else {
             // No updates provided
             res.status(400).json({
@@ -422,7 +456,7 @@ router.get('/check-email', async (req, res) => {
             });
         }
 
-        const user = await database.findUserByEmail(email);
+        const user = await database.findUserByEmail(email.toLowerCase().trim());
         
         res.status(200).json({
             status: true,
@@ -441,28 +475,33 @@ router.get('/check-email', async (req, res) => {
     }
 });
 
-// Request password reset (optional - if you want to add this later)
+// Request password reset
 router.post('/forgot-password', [
     body('email').isEmail().withMessage('Valid email required')
 ], async (req, res) => {
     try {
         const { email } = req.body;
         
-        const user = await database.findUserByEmail(email);
+        const user = await database.findUserByEmail(email.toLowerCase().trim());
+        
+        // Don't reveal if user exists for security
         if (!user) {
-            // Don't reveal if user exists for security
             return res.status(200).json({
                 status: true,
                 message: 'If an account exists with this email, you will receive password reset instructions.'
             });
         }
 
-        // In a real implementation, you would:
-        // 1. Generate reset token
-        // 2. Send email with reset link
-        // 3. Store token in database with expiry
-        
-        // For now, return success response
+        // Generate reset token
+        const resetToken = require('crypto').randomBytes(32).toString('hex');
+        const resetTokenExpiry = new Date(Date.now() + 3600000).toISOString(); // 1 hour
+
+        // Save reset token to database
+        await database.saveResetToken(user.id, resetToken, resetTokenExpiry);
+
+        // In production, send email here
+        console.log(`Password reset token for ${email}: ${resetToken}`);
+
         res.status(200).json({
             status: true,
             message: 'If an account exists with this email, you will receive password reset instructions.'
@@ -476,7 +515,7 @@ router.post('/forgot-password', [
     }
 });
 
-// Reset password (optional)
+// Reset password
 router.post('/reset-password', [
     body('token').notEmpty().withMessage('Reset token required'),
     body('new_password').isLength({ min: 6 }).withMessage('New password must be at least 6 characters')
@@ -484,12 +523,27 @@ router.post('/reset-password', [
     try {
         const { token, new_password } = req.body;
         
-        // In a real implementation, you would:
-        // 1. Verify reset token
-        // 2. Check expiry
-        // 3. Update password
-        // 4. Invalidate used token
-        
+        // Verify reset token
+        const resetData = await database.verifyResetToken(token);
+        if (!resetData) {
+            return res.status(400).json({
+                status: false,
+                message: 'Invalid or expired reset token'
+            });
+        }
+
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(new_password, 10);
+
+        // Update password
+        await database.updateUser(resetData.user_id, {
+            password: hashedPassword,
+            updated_at: new Date().toISOString()
+        });
+
+        // Invalidate used token
+        await database.invalidateResetToken(token);
+
         res.status(200).json({
             status: true,
             message: 'Password has been reset successfully. Please login with your new password.'
@@ -516,53 +570,75 @@ router.delete('/account', authenticateToken, async (req, res) => {
             });
         }
 
-        const client = await database.pool.connect();
-        try {
-            await client.query('BEGIN');
-
-            // Delete user's sessions
-            await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
-
-            // Delete user's API keys
-            await client.query('DELETE FROM api_keys WHERE user_id = $1', [userId]);
-
-            // Delete user's usage logs
-            await client.query('DELETE FROM usage_logs WHERE user_id = $1', [userId]);
-
-            // Delete user's transactions
-            await client.query('DELETE FROM transactions WHERE user_id = $1', [userId]);
-
-            // Finally, delete the user
-            const result = await client.query(
-                'DELETE FROM users WHERE id = $1 RETURNING email',
-                [userId]
-            );
-
-            await client.query('COMMIT');
-
-            if (result.rows.length === 0) {
-                return res.status(404).json({
+        // Verify password if provided
+        if (req.body.password) {
+            const user = await database.findUserById(userId);
+            const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
+            if (!isPasswordValid) {
+                return res.status(400).json({
                     status: false,
-                    message: 'User not found'
+                    message: 'Invalid password'
                 });
             }
-
-            res.status(200).json({
-                status: true,
-                message: 'Account deleted successfully'
-            });
-
-        } catch (error) {
-            await client.query('ROLLBACK');
-            throw error;
-        } finally {
-            client.release();
         }
+
+        // Delete user account
+        const deleted = await database.deleteUser(userId);
+        
+        if (!deleted) {
+            return res.status(404).json({
+                status: false,
+                message: 'User not found'
+            });
+        }
+
+        res.status(200).json({
+            status: true,
+            message: 'Account deleted successfully'
+        });
+
     } catch (error) {
         console.error('Delete account error:', error);
         res.status(500).json({
             status: false,
             message: 'Failed to delete account'
+        });
+    }
+});
+
+// Verify token (for checking if token is still valid)
+router.get('/verify-token', authenticateToken, async (req, res) => {
+    try {
+        const user = req.user;
+        
+        // Get fresh user data
+        const freshUser = await database.findUserById(user.id);
+        if (!freshUser) {
+            return res.status(404).json({
+                status: false,
+                message: 'User not found'
+            });
+        }
+
+        res.status(200).json({
+            status: true,
+            data: {
+                valid: true,
+                user: {
+                    id: freshUser.id,
+                    email: freshUser.email,
+                    full_name: freshUser.full_name,
+                    plan: freshUser.plan,
+                    is_verified: freshUser.is_verified === 1,
+                    is_active: freshUser.is_active === 1
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Verify token error:', error);
+        res.status(500).json({
+            status: false,
+            message: 'Failed to verify token'
         });
     }
 });
