@@ -49,6 +49,32 @@ class Database {
             // Enable UUID extension
             await this.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
             
+            // Check if tables exist and their structure
+            const existingTables = await this.query(`
+                SELECT table_name, column_name, data_type 
+                FROM information_schema.columns 
+                WHERE table_schema = 'public' 
+                AND table_name IN ('users', 'api_keys', 'sessions', 'password_reset_tokens', 'usage_logs')
+                ORDER BY table_name, ordinal_position
+            `);
+
+            // Drop existing tables if they have incompatible types
+            const tablesToCheck = ['password_reset_tokens', 'usage_logs', 'sessions', 'api_keys', 'users'];
+            
+            for (const table of tablesToCheck) {
+                const tableColumns = existingTables.rows.filter(row => row.table_name === table);
+                
+                if (tableColumns.length > 0) {
+                    // Check if user_id is integer instead of UUID
+                    const userIdColumn = tableColumns.find(col => col.column_name === 'user_id');
+                    
+                    if (userIdColumn && userIdColumn.data_type === 'integer') {
+                        console.log(`Dropping table ${table} due to incompatible schema (integer instead of UUID)`);
+                        await this.query(`DROP TABLE IF EXISTS ${table} CASCADE`);
+                    }
+                }
+            }
+            
             // Users table
             await this.query(`
                 CREATE TABLE IF NOT EXISTS users (
