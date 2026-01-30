@@ -1,2125 +1,1393 @@
 <!DOCTYPE html>
-<html lang="id" class="layout-navbar-fixed layout-menu-fixed" dir="ltr" data-bs-theme="light">
+<html lang="id" data-bs-theme="light">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>API Teguh - Advanced REST API Dashboard</title>
-    <meta name="description" content="Advanced REST API server dengan Multi-Model AI, Social Media Downloader, dan Real-time Monitoring" />
-    <meta name="keywords" content="API, REST API, AI, Deepseek, Copilot, GPT-5, Instagram Downloader, Facebook Downloader, Spotify, YouTube, Threads" />
-    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/96/000000/api.png" />
-    
-    <!-- Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" />
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- ApexCharts CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.css" />
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - API Teguh</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
     <style>
-        :root {
-            --primary-color: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary-color: #8b5cf6;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --info-color: #3b82f6;
-            --dark-color: #1e293b;
-            --light-color: #f8fafc;
-            --border-color: #e2e8f0;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --sidebar-width: 280px;
+        /* Add these new styles to the existing CSS */
+
+        /* API Keys Management */
+        .api-keys-list {
+            margin-top: 20px;
         }
 
-        [data-bs-theme="dark"] {
-            --primary-color: #818cf8;
-            --primary-dark: #6366f1;
-            --secondary-color: #a78bfa;
-            --dark-color: #0f172a;
-            --light-color: #1e293b;
-            --border-color: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--light-color);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        /* Layout Structure */
-        .layout-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .layout-container {
-            display: flex;
-            flex: 1;
-        }
-
-        /* Sidebar */
-        #layout-menu {
-            width: var(--sidebar-width);
-            background: var(--dark-color);
-            color: rgba(255, 255, 255, 0.9);
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .layout-menu-expanded {
-            transform: translateX(0) !important;
-        }
-
-        @media (max-width: 1199.98px) {
-            #layout-menu {
-                transform: translateX(-100%);
-            }
-        }
-
-        /* App Brand */
-        .app-brand {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 1rem;
-        }
-
-        .app-brand-link {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: white;
-        }
-
-        .app-brand-logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .api-key-item {
+            background: var(--light);
+            border: 1px solid var(--border);
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-        }
-
-        .app-brand-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .app-brand-text small {
-            display: block;
-            font-size: 0.75rem;
-            opacity: 0.8;
-            font-weight: 400;
-        }
-
-        /* Menu */
-        .menu-inner {
-            list-style: none;
-            padding: 0 1rem;
-        }
-
-        .menu-header {
-            padding: 1rem 0 0.5rem;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            opacity: 0.6;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 1rem;
-        }
-
-        .menu-header:first-child {
-            border-top: none;
-            margin-top: 0;
-        }
-
-        .menu-item {
-            margin-bottom: 2px;
-        }
-
-        .menu-link {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .menu-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .menu-link.active {
-            background: rgba(99, 102, 241, 0.2);
-            color: white;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .menu-icon {
-            width: 20px;
-            margin-right: 12px;
-            text-align: center;
-            font-size: 1.125rem;
-        }
-
-        .menu-sub {
-            list-style: none;
-            padding-left: 1.5rem;
-            margin-top: 0.25rem;
-            display: none;
-        }
-
-        .menu-toggle.active + .menu-sub {
-            display: block;
-        }
-
-        .menu-toggle::after {
-            content: '\EA6E';
-            font-family: 'remixicon';
-            margin-left: auto;
-            transition: transform 0.3s ease;
-        }
-
-        .menu-toggle.active::after {
-            content: '\EA78';
-            transform: rotate(180deg);
-        }
-
-        /* Main Content */
-        .layout-page {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            transition: margin-left 0.3s ease;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        @media (max-width: 1199.98px) {
-            .layout-page {
-                margin-left: 0;
-            }
-        }
-
-        /* Navbar */
-        #layout-navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            backdrop-filter: blur(10px);
-            padding: 1rem 1.5rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-content {
+            padding: 15px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        /* Content */
-        .content-wrapper {
-            flex: 1;
-            padding: 1.5rem;
+        .api-key-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
         }
 
-        /* Cards */
-        .card {
-            background: var(--light-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            background: transparent;
-        }
-
-        .card-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .card-subtitle {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        /* Stats Cards */
-        .stat-card {
-            text-align: center;
-            padding: 1.5rem;
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+        .api-key-meta {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.25rem;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: #64748b;
         }
 
-        .stat-icon.primary { background: rgba(99, 102, 241, 0.1); color: var(--primary-color); }
-        .stat-icon.success { background: rgba(16, 185, 129, 0.1); color: var(--success-color); }
-        .stat-icon.warning { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
-        .stat-icon.info { background: rgba(59, 130, 246, 0.1); color: var(--info-color); }
-
-        .stat-number {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* System Metrics */
-        .metric-card {
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 0.25rem;
-        }
-
-        .metric-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-thin {
-            height: 6px;
-            border-radius: 3px;
-            background: var(--border-color);
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--primary-color);
-            transition: width 1s ease;
-        }
-
-        /* Chat Interface */
-        .chat-container {
-            height: 300px;
-            overflow-y: auto;
-            padding: 1rem;
-            background: var(--light-color);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-
-        .chat-message {
-            max-width: 80%;
-            margin-bottom: 1rem;
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-            font-size: 0.9375rem;
-            line-height: 1.4;
-        }
-
-        .chat-message.user {
-            background: var(--primary-color);
-            color: white;
-            margin-left: auto;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-message.ai {
-            background: var(--border-color);
-            color: var(--text-primary);
-            border-bottom-left-radius: 4px;
-        }
-
-        /* Download Options */
-        .download-option {
-            display: block;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--text-primary);
-            transition: all 0.2s ease;
-            margin-bottom: 0.75rem;
-        }
-
-        .download-option:hover {
-            border-color: var(--primary-color);
-            background: rgba(99, 102, 241, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .download-icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        /* Media Grid */
-        .media-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 1rem;
-        }
-
-        .media-item {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            aspect-ratio: 1;
-        }
-
-        .media-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .media-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px;
-            font-size: 0.75rem;
-        }
-
-        /* API Response */
-        .api-response {
-            background: var(--dark-color);
-            color: #e2e8f0;
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.8125rem;
-            height: 300px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        /* Activity List */
-        .activity-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .activity-item {
+        .api-key-actions {
             display: flex;
-            align-items: flex-start;
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
-            transition: background 0.2s ease;
+            gap: 5px;
         }
 
-        .activity-item:hover {
-            background: rgba(99, 102, 241, 0.05);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 32px;
-            height: 32px;
+        .btn-icon {
+            width: 35px;
+            height: 35px;
             border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 0.75rem;
-            flex-shrink: 0;
-        }
-
-        .activity-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .activity-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.125rem;
-            color: var(--text-primary);
-        }
-
-        .activity-time {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 0.625rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.2s ease;
             border: none;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-outline-primary {
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            background: transparent;
-        }
-
-        .btn-outline-primary:hover {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        /* Form Controls */
-        .form-control, .form-select {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.625rem 1rem;
-            background: var(--light-color);
-            color: var(--text-primary);
-            transition: all 0.2s ease;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-            outline: none;
-        }
-
-        /* Badges */
-        .badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .bg-primary { background: var(--primary-color); }
-        .bg-success { background: var(--success-color); }
-        .bg-danger { background: var(--danger-color); }
-        .bg-warning { background: var(--warning-color); }
-        .bg-info { background: var(--info-color); }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s ease;
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        /* Loading States */
-        .loading {
-            position: relative;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 2px solid var(--border-color);
-            border-top-color: var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Mobile Toggle */
-        .mobile-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            background: white;
+            display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 1.25rem;
+            transition: all 0.3s;
         }
 
-        @media (max-width: 1199.98px) {
-            .mobile-toggle {
-                display: flex;
-            }
+        .btn-icon:hover {
+            background: var(--border);
         }
 
-        /* Footer */
-        .footer {
-            background: var(--light-color);
-            border-top: 1px solid var(--border-color);
-            padding: 1.5rem;
-            margin-top: auto;
+        /* Create API Key Modal */
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--border-color);
-            border-radius: 4px;
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--text-secondary);
-            border-radius: 4px;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-primary);
+        /* Usage Stats */
+        .usage-chart-container {
+            height: 200px;
+            margin-top: 20px;
+            position: relative;
         }
 
-        /* Utility Classes */
-        .text-primary { color: var(--primary-color) !important; }
-        .text-success { color: var(--success-color) !important; }
-        .text-danger { color: var(--danger-color) !important; }
-        .text-warning { color: var(--warning-color) !important; }
-        .text-muted { color: var(--text-secondary) !important; }
+        .usage-chart {
+            width: 100%;
+            height: 100%;
+        }
 
-        .bg-light { background: var(--light-color) !important; }
-        .bg-dark { background: var(--dark-color) !important; }
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
 
-        .border { border: 1px solid var(--border-color) !important; }
-        .rounded { border-radius: 8px !important; }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-        .shadow-sm { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important; }
-        .shadow { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important; }
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+        }
 
-        /* Responsive Grid */
-        @media (max-width: 768px) {
-            .content-wrapper {
-                padding: 1rem;
-            }
-            
-            .card-body {
-                padding: 1rem;
-            }
-            
-            .stat-number {
-                font-size: 1.5rem;
-            }
-            
-            .chat-container {
-                height: 250px;
-            }
-            
-            .media-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--border);
+        }
+
+        /* Plan Status */
+        .plan-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-expired {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .status-inactive {
+            background: rgba(148, 163, 184, 0.1);
+            color: #64748b;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 8px 20px;
+            border: none;
+            background: none;
+            color: #64748b;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: var(--border);
+        }
+
+        /* Responsive Table */
+        .table-responsive {
+            overflow-x: auto;
         }
     </style>
 </head>
 <body>
-    <!-- Mobile Toggle -->
-    <button class="mobile-toggle" id="mobileToggle">
-        <i class="ri-menu-line"></i>
-    </button>
-
-    <!-- Layout Container -->
-    <div class="layout-wrapper">
-        <!-- Sidebar Menu -->
-        <aside id="layout-menu" class="layout-menu">
-            <div class="app-brand">
-                <a href="/" class="app-brand-link">
-                    <div class="app-brand-logo">
-                        <i class="ri-server-line"></i>
-                    </div>
-                    <div class="app-brand-text">
-                        API Teguh
-                        <small>v3.6.0</small>
-                    </div>
-                </a>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="ri-server-line"></i>
+                <h2>API Teguh</h2>
             </div>
 
-            <!-- Menu Items -->
-            <ul class="menu-inner">
-                <!-- Dashboard -->
-                <li class="menu-item active">
-                    <a href="dashboard.html" class="menu-link">
-                        <i class="menu-icon ri-dashboard-line"></i>
+            <ul class="menu">
+                <li class="menu-item">
+                    <a href="#" class="menu-link active" onclick="showSection('overview')">
+                        <i class="ri-dashboard-line"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
-
-                <!-- Home -->
                 <li class="menu-item">
-                    <a href="index.html" class="menu-link">
-                        <i class="menu-icon ri-home-line"></i>
-                        <span>Home</span>
-                    </a>
-                </li>
-
-                <!-- AI Endpoints -->
-                <li class="menu-header">
-                    AI Endpoints
-                </li>
-                <li class="menu-item">
-                    <a href="javascript:void(0)" class="menu-link menu-toggle">
-                        <i class="menu-icon ri-robot-line"></i>
-                        <span>AI Models</span>
-                    </a>
-                    <ul class="menu-sub">
-                        <li><a href="/api/deepseek?q=Hello" target="_blank">Deepseek AI</a></li>
-                        <li><a href="/api/copilot?text=Hello" target="_blank">Copilot AI</a></li>
-                        <li><a href="/api/gpt5?text=Hello" target="_blank">GPT-5 AI</a></li>
-                        <li><a href="/api/ai/chat?text=Hello&model=auto" target="_blank">Multi-Model Chat</a></li>
-                    </ul>
-                </li>
-
-                <!-- Social Media Downloaders -->
-                <li class="menu-item">
-                    <a href="javascript:void(0)" class="menu-link menu-toggle">
-                        <i class="menu-icon ri-download-cloud-line"></i>
-                        <span>Social Media</span>
-                    </a>
-                    <ul class="menu-sub">
-                        <li><a href="/api/instagram?url=" target="_blank">Instagram</a></li>
-                        <li><a href="/api/facebook?url=" target="_blank">Facebook</a></li>
-                        <li><a href="/api/threads?url=" target="_blank">Threads</a></li>
-                        <li><a href="/api/social/media?url=" target="_blank">Social Tools</a></li>
-                    </ul>
-                </li>
-
-                <!-- Audio & Video -->
-                <li class="menu-item">
-                    <a href="javascript:void(0)" class="menu-link menu-toggle">
-                        <i class="menu-icon ri-music-line"></i>
-                        <span>Audio & Video</span>
-                    </a>
-                    <ul class="menu-sub">
-                        <li><a href="/api/spotify?url=" target="_blank">Spotify</a></li>
-                        <li><a href="/api/youtube/audio?url=" target="_blank">YouTube Audio</a></li>
-                        <li><a href="/api/youtube/video?url=" target="_blank">YouTube Video</a></li>
-                    </ul>
-                </li>
-
-                <!-- Unified Downloader -->
-                <li class="menu-item">
-                    <a href="/api/download?url=" target="_blank" class="menu-link">
-                        <i class="menu-icon ri-download-line"></i>
-                        <span>Unified Downloader</span>
-                    </a>
-                </li>
-
-                <!-- Server Tools -->
-                <li class="menu-item">
-                    <a href="javascript:void(0)" class="menu-link menu-toggle">
-                        <i class="menu-icon ri-tools-line"></i>
-                        <span>Server Tools</span>
-                    </a>
-                    <ul class="menu-sub">
-                        <li><a href="/api/status" target="_blank">Server Status</a></li>
-                        <li><a href="/api/ping" target="_blank">Ping Test</a></li>
-                        <li><a href="/api/health" target="_blank">Health Check</a></li>
-                        <li><a href="/api/info" target="_blank">API Info</a></li>
-                    </ul>
-                </li>
-
-                <!-- Quick Actions -->
-                <li class="menu-header">
-                    Quick Actions
-                </li>
-                <li class="menu-item">
-                    <a href="#ai-chat" class="menu-link" onclick="scrollToSection('ai-chat')">
-                        <i class="menu-icon ri-chat-1-line"></i>
-                        <span>AI Chat</span>
+                    <a href="#" class="menu-link" onclick="showSection('apikeys')">
+                        <i class="ri-key-2-line"></i>
+                        <span>API Keys</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#downloader" class="menu-link" onclick="scrollToSection('downloader')">
-                        <i class="menu-icon ri-download-line"></i>
-                        <span>Downloader</span>
+                    <a href="#" class="menu-link" onclick="showSection('usage')">
+                        <i class="ri-bar-chart-line"></i>
+                        <span>Usage Stats</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#api-tester" class="menu-link" onclick="scrollToSection('api-tester')">
-                        <i class="menu-icon ri-code-s-slash-line"></i>
-                        <span>API Tester</span>
+                    <a href="#" class="menu-link" onclick="showSection('transactions')">
+                        <i class="ri-secure-payment-line"></i>
+                        <span>Transactions</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#threads-downloader" class="menu-link" onclick="scrollToSection('threads-downloader')">
-                        <i class="menu-icon ri-threads-line"></i>
-                        <span>Threads Download</span>
+                    <a href="#" class="menu-link" onclick="showSection('settings')">
+                        <i class="ri-settings-3-line"></i>
+                        <span>Settings</span>
                     </a>
-                </li>
-
-                <!-- Support -->
-                <li class="menu-header">
-                    Support
-                </li>
-                <li class="menu-item">
-                    <a href="mailto:support@api-teguh.com" class="menu-link">
-                        <i class="menu-icon ri-customer-service-line"></i>
-                        <span>Contact Support</span>
-                    </a>
-                </li>
-
-                <!-- Server Status -->
-                <div class="menu-header">
-                    Server Status
-                </div>
-                <li class="menu-item">
-                    <div class="menu-link">
-                        <div class="d-flex align-items-center">
-                            <div class="pulse" id="statusIndicator" style="width: 8px; height: 8px; border-radius: 50%; background: var(--success-color); margin-right: 8px;"></div>
-                            <div>
-                                <div class="small">Server Status</div>
-                                <div class="small text-muted" id="serverUptime">Checking...</div>
-                            </div>
-                        </div>
-                    </div>
                 </li>
             </ul>
+
+            <div class="user-info">
+                <div class="user-card">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-details">
+                        <h4 id="userName">User</h4>
+                        <span id="userEmail">user@example.com</span>
+                        <div id="userPlan" class="plan-status status-active">Free</div>
+                    </div>
+                </div>
+                <button class="btn btn-outline" style="margin-top: 15px; width: 100%;" onclick="logout()">
+                    <i class="ri-logout-box-line"></i>
+                    Logout
+                </button>
+            </div>
         </aside>
 
         <!-- Main Content -->
-        <div class="layout-page">
-            <!-- Navbar -->
-            <nav id="layout-navbar">
-                <div class="navbar-content">
-                    <div class="d-flex align-items-center">
-                        <h4 class="mb-0 text-white">Dashboard Overview</h4>
-                    </div>
-                    <div class="d-flex align-items-center gap-3">
-                        <button class="btn btn-outline-light btn-sm" id="refreshBtn">
-                            <i class="ri-refresh-line"></i> Refresh
-                        </button>
-                        <button class="btn btn-light btn-sm" id="themeToggle">
-                            <i class="ri-sun-line" id="themeIcon"></i>
-                        </button>
-                        <div class="dropdown">
-                            <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                <i class="ri-user-line"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="index.html">Back to Home</a></li>
-                                <li><a class="dropdown-item" href="/api/info" target="_blank">Documentation</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="logout()">Logout</a></li>
-                            </ul>
-                        </div>
-                    </div>
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1 id="pageTitle">Dashboard Overview</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="refreshData()">
+                        <i class="ri-refresh-line"></i>
+                        Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="showUpgradeModal()">
+                        <i class="ri-add-line"></i>
+                        Upgrade Plan
+                    </button>
                 </div>
-            </nav>
+            </div>
 
-            <!-- Content -->
-            <div class="content-wrapper">
-                <!-- Stats Overview -->
-                <div class="row mb-4">
-                    <div class="col-md-3 col-sm-6 mb-4">
-                        <div class="card stat-card fade-in">
+            <!-- Content Sections -->
+            <div id="overviewSection">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
                             <div class="stat-icon primary">
-                                <i class="ri-plug-line"></i>
+                                <i class="ri-key-2-line"></i>
                             </div>
-                            <div class="stat-number" id="endpointsCount">14</div>
-                            <div class="stat-label">API Endpoints</div>
                         </div>
+                        <div class="stat-value" id="totalKeys">0</div>
+                        <div class="stat-label">Active API Keys</div>
                     </div>
-                    <div class="col-md-3 col-sm-6 mb-4">
-                        <div class="card stat-card fade-in">
+                    <div class="stat-card">
+                        <div class="stat-header">
                             <div class="stat-icon success">
-                                <i class="ri-checkbox-circle-line"></i>
+                                <i class="ri-check-double-line"></i>
                             </div>
-                            <div class="stat-number" id="successRate">99.9%</div>
-                            <div class="stat-label">Success Rate</div>
                         </div>
+                        <div class="stat-value" id="totalRequests">0</div>
+                        <div class="stat-label">Requests Today</div>
                     </div>
-                    <div class="col-md-3 col-sm-6 mb-4">
-                        <div class="card stat-card fade-in">
+                    <div class="stat-card">
+                        <div class="stat-header">
                             <div class="stat-icon warning">
                                 <i class="ri-time-line"></i>
                             </div>
-                            <div class="stat-number" id="responseTime">32ms</div>
-                            <div class="stat-label">Avg Response</div>
                         </div>
+                        <div class="stat-value" id="successRate">100%</div>
+                        <div class="stat-label">Success Rate</div>
                     </div>
-                    <div class="col-md-3 col-sm-6 mb-4">
-                        <div class="card stat-card fade-in">
-                            <div class="stat-icon info">
-                                <i class="ri-user-line"></i>
-                            </div>
-                            <div class="stat-number" id="activeUsers">156</div>
-                            <div class="stat-label">Active Users</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- System Monitoring -->
-                <div class="row mb-4">
-                    <div class="col-lg-8 mb-4">
-                        <div class="card h-100 fade-in">
-                            <div class="card-header">
-                                <h5 class="card-title">System Monitoring</h5>
-                                <p class="card-subtitle">Real-time server metrics</p>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="metric-card">
-                                            <div class="metric-value" id="cpuUsage">24.5%</div>
-                                            <div class="metric-label">CPU Usage</div>
-                                            <div class="progress-thin">
-                                                <div class="progress-bar" id="cpuBar" style="width: 24.5%"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="metric-card">
-                                            <div class="metric-value" id="memoryUsage">67.2%</div>
-                                            <div class="metric-label">Memory Usage</div>
-                                            <div class="progress-thin">
-                                                <div class="progress-bar" id="memoryBar" style="width: 67.2%"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="metric-card">
-                                            <div class="metric-value" id="uptimeValue">15d 7h</div>
-                                            <div class="metric-label">Server Uptime</div>
-                                            <div class="mt-2">
-                                                <span class="badge bg-success">Online</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="metric-card">
-                                            <div class="metric-value" id="totalRequests">15.8K</div>
-                                            <div class="metric-label">Total Requests</div>
-                                            <div class="mt-2">
-                                                <span class="badge bg-primary">Today: 387</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon danger">
+                                <i class="ri-pulse-line"></i>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 mb-4">
-                        <div class="card h-100 fade-in">
-                            <div class="card-header">
-                                <h5 class="card-title">Endpoint Status</h5>
-                                <p class="card-subtitle">API health monitoring</p>
-                            </div>
-                            <div class="card-body">
-                                <div class="activity-list" id="endpointStatus">
-                                    <!-- Status akan di-load oleh JavaScript -->
-                                </div>
-                            </div>
-                        </div>
+                        <div class="stat-value" id="responseTime">0ms</div>
+                        <div class="stat-label">Avg Response Time</div>
                     </div>
                 </div>
 
-                <!-- AI Chat Section -->
-                <div class="row mb-4" id="ai-chat">
-                    <div class="col-12">
-                        <div class="card fade-in">
+                <!-- Content Grid -->
+                <div class="content-grid">
+                    <!-- Left Column -->
+                    <div>
+                        <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title">AI Chat Assistant</h5>
-                                <p class="card-subtitle">Test multiple AI models in real-time</p>
+                                <h3 class="card-title">Primary API Key</h3>
+                                <button class="btn btn-outline btn-sm" onclick="showCreateApiKeyModal()">
+                                    <i class="ri-add-line"></i>
+                                    Create New
+                                </button>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <div class="mb-3">
-                                            <label class="form-label">Select AI Model</label>
-                                            <div class="d-flex flex-wrap gap-2">
-                                                <button class="btn btn-outline-primary active" data-model="auto">Auto</button>
-                                                <button class="btn btn-outline-primary" data-model="deepseek">Deepseek</button>
-                                                <button class="btn btn-outline-primary" data-model="copilot">Copilot</button>
-                                                <button class="btn btn-outline-primary" data-model="gpt5">GPT-5</button>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Your Message</label>
-                                            <textarea class="form-control" id="aiMessage" rows="4" placeholder="Type your message here...">Hello! How can you help me today?</textarea>
-                                        </div>
-                                        <button class="btn btn-primary w-100" id="sendAiBtn">
-                                            <i class="ri-send-plane-line me-2"></i>Send Message
-                                        </button>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="card h-100">
-                                            <div class="card-header">
-                                                <h6 class="mb-0">Chat Response</h6>
-                                            </div>
-                                            <div class="card-body p-0">
-                                                <div class="chat-container" id="chatContainer">
-                                                    <div class="chat-message ai">
-                                                        Hello! I'm your AI assistant. I can help you with questions using multiple AI models. Select a model and type your message to start chatting!
-                                                    </div>
-                                                </div>
-                                                <div class="p-3 border-top">
-                                                    <small class="text-muted" id="responseInfo">Ready to chat...</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="api-key-display">
+                                <p style="margin-bottom: 10px; font-weight: 500;">Your API Key:</p>
+                                <div class="api-key-wrapper">
+                                    <div class="api-key-value" id="apiKeyValue">Loading...</div>
+                                    <button class="copy-btn" onclick="copyApiKey()">
+                                        <i class="ri-file-copy-line"></i>
+                                        Copy
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="usage-progress">
+                                <div class="usage-stats">
+                                    <span>Daily Usage</span>
+                                    <span id="usageText">0 / 100</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="usageProgress" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Downloader Section -->
-                <div class="row mb-4" id="downloader">
-                    <div class="col-12">
-                        <div class="card fade-in">
+                        <div class="card" style="margin-top: 20px;">
                             <div class="card-header">
-                                <h5 class="card-title">Social Media Downloader</h5>
-                                <p class="card-subtitle">Download videos from Instagram, Facebook, and Threads</p>
+                                <h3 class="card-title">Recent Transactions</h3>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="mb-3">
-                                            <label class="form-label">Platform</label>
-                                            <select class="form-select" id="downloadPlatform">
-                                                <option value="auto">Auto Detect</option>
-                                                <option value="instagram">Instagram</option>
-                                                <option value="facebook">Facebook</option>
-                                                <option value="threads">Threads</option>
-                                                <option value="youtube">YouTube</option>
-                                                <option value="spotify">Spotify</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Media URL</label>
-                                            <input type="text" class="form-control" id="mediaUrl" placeholder="https://www.instagram.com/p/...">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Quality (Optional)</label>
-                                            <select class="form-select" id="downloadQuality">
-                                                <option value="best">Best Quality</option>
-                                                <option value="high">High</option>
-                                                <option value="medium">Medium</option>
-                                                <option value="low">Low</option>
-                                                <option value="360">360p</option>
-                                                <option value="720">720p</option>
-                                                <option value="1080">1080p</option>
-                                            </select>
-                                        </div>
-                                        <button class="btn btn-primary w-100" id="downloadBtn">
-                                            <i class="ri-download-line me-2"></i>Download Media
-                                        </button>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="card h-100">
-                                            <div class="card-header">
-                                                <h6 class="mb-0">Download Result</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div id="downloadResult" class="text-center py-5">
-                                                    <i class="ri-download-cloud-line text-muted" style="font-size: 3rem;"></i>
-                                                    <p class="text-muted mt-3">Enter a URL to download media</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Plan</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="transactionsTable">
+                                        <tr>
+                                            <td colspan="4" style="text-align: center; color: #64748b;">No transactions yet</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Threads Downloader Section -->
-                <div class="row mb-4" id="threads-downloader">
-                    <div class="col-12">
-                        <div class="card fade-in">
+                    <!-- Right Column -->
+                    <div>
+                        <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title">Threads Downloader</h5>
-                                <p class="card-subtitle">Download images from Threads posts</p>
+                                <h3 class="card-title">Current Plan</h3>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <div class="mb-3">
-                                            <label class="form-label">Threads URL</label>
-                                            <input type="text" class="form-control" id="threadsUrl" placeholder="https://www.threads.com/@username/post/...">
-                                            <small class="text-muted">Example: https://www.threads.com/@mamanyahyaali/post/DOslYoXAVSs</small>
-                                        </div>
-                                        <button class="btn btn-primary w-100" id="threadsDownloadBtn">
-                                            <i class="ri-threads-line me-2"></i>Download Threads Images
-                                        </button>
-                                        <div class="mt-3">
-                                            <small class="text-muted">
-                                                <i class="ri-information-line me-1"></i>
-                                                Threads downloader supports multi-image posts (carousels)
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="card h-100">
-                                            <div class="card-header">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <h6 class="mb-0">Threads Images</h6>
-                                                    <small class="text-muted" id="threadsCount">0 images</small>
-                                                </div>
-                                            </div>
-                                            <div class="card-body">
-                                                <div id="threadsResult" class="text-center py-5">
-                                                    <i class="ri-threads-line text-muted" style="font-size: 3rem;"></i>
-                                                    <p class="text-muted mt-3">Enter a Threads URL to download images</p>
-                                                </div>
-                                                <div class="media-grid" id="threadsGallery" style="display: none;"></div>
-                                                <div class="mt-3" id="threadsInfo" style="display: none;">
-                                                    <div class="alert alert-info">
-                                                        <i class="ri-information-line me-2"></i>
-                                                        Click on any image to download it directly
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="plan-card" id="planCard">
+                                <div class="plan-name" id="planName">Free Plan</div>
+                                <div class="plan-limit" id="planLimit">100 requests / day</div>
+                                <button class="upgrade-btn" onclick="showUpgradeModal()">
+                                    <i class="ri-arrow-up-line"></i>
+                                    Upgrade Now
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- API Tester -->
-                <div class="row mb-4" id="api-tester">
-                    <div class="col-12">
-                        <div class="card fade-in">
-                            <div class="card-header">
-                                <h5 class="card-title">API Tester</h5>
-                                <p class="card-subtitle">Test API endpoints directly</p>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <div class="mb-3">
-                                            <label class="form-label">Endpoint</label>
-                                            <select class="form-select" id="endpointSelect">
-                                                <option value="/api/deepseek?q=">Deepseek AI</option>
-                                                <option value="/api/copilot?text=">Copilot AI</option>
-                                                <option value="/api/gpt5?text=">GPT-5 AI</option>
-                                                <option value="/api/instagram?url=">Instagram</option>
-                                                <option value="/api/facebook?url=">Facebook</option>
-                                                <option value="/api/threads?url=">Threads</option>
-                                                <option value="/api/spotify?url=">Spotify</option>
-                                                <option value="/api/youtube/audio?url=">YouTube Audio</option>
-                                                <option value="/api/youtube/video?url=">YouTube Video</option>
-                                                <option value="/api/status">Server Status</option>
-                                                <option value="/api/health">Health Check</option>
-                                                <option value="/api/info">API Info</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Parameter Value</label>
-                                            <input type="text" class="form-control" id="paramValue" placeholder="Enter value...">
-                                        </div>
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-primary" id="testApiBtn">
-                                                <i class="ri-play-line me-2"></i>Test Endpoint
-                                            </button>
-                                            <button class="btn btn-outline-primary" id="copyUrlBtn">
-                                                <i class="ri-clipboard-line me-2"></i>Copy URL
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="card h-100">
-                                            <div class="card-header">
-                                                <h6 class="mb-0">API Response</h6>
-                                            </div>
-                                            <div class="card-body p-0">
-                                                <div class="api-response" id="apiResponse">
-{
-  "status": true,
-  "message": "Select an endpoint and click 'Test Endpoint'",
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
-                                                </div>
-                                                <div class="p-3 border-top">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <small class="text-muted" id="responseStatus">Status: Ready</small>
-                                                        </div>
-                                                        <div class="col text-end">
-                                                            <small class="text-muted" id="apiResponseTime">Time: --</small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Activity Log -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card fade-in">
-                            <div class="card-header">
-                                <h5 class="card-title">Recent Activity</h5>
-                                <p class="card-subtitle">Latest API requests and events</p>
-                            </div>
-                            <div class="card-body">
-                                <div class="activity-list" id="activityLog">
-                                    <!-- Activities will be loaded here -->
-                                </div>
+                            <div style="margin-top: 15px;">
+                                <h4 style="margin-bottom: 10px; font-size: 1rem;">Plan Features:</h4>
+                                <ul class="pricing-features" id="planFeatures">
+                                    <li><i class="ri-check-line"></i> 100 requests/day</li>
+                                    <li><i class="ri-check-line"></i> Basic support</li>
+                                    <li><i class="ri-check-line"></i> Rate limiting</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Footer -->
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <div class="text-muted">
-                                © 2024 API Teguh v3.6.0 • Built by Muhammad Teguh
-                            </div>
+            <!-- API Keys Section (hidden by default) -->
+            <div id="apikeysSection" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">API Keys Management</h3>
+                        <button class="btn btn-primary" onclick="showCreateApiKeyModal()">
+                            <i class="ri-add-line"></i>
+                            Create New API Key
+                        </button>
+                    </div>
+                    <div id="apiKeysList" class="api-keys-list">
+                        <div class="spinner" id="apiKeysSpinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Stats Section (hidden by default) -->
+            <div id="usageSection" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Usage Statistics</h3>
+                        <div class="tabs">
+                            <button class="tab-btn active" onclick="showUsageTab('daily')">Daily</button>
+                            <button class="tab-btn" onclick="showUsageTab('weekly')">Weekly</button>
+                            <button class="tab-btn" onclick="showUsageTab('monthly')">Monthly</button>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <div class="d-flex justify-content-end gap-3">
-                                <a href="index.html" class="text-muted text-decoration-none">Home</a>
-                                <a href="dashboard.html" class="text-muted text-decoration-none">Dashboard</a>
-                                <a href="/api/info" target="_blank" class="text-muted text-decoration-none">Documentation</a>
+                    </div>
+                    <div class="usage-chart-container">
+                        <canvas id="usageChart" class="usage-chart"></canvas>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Total Requests</th>
+                                    <th>Success Rate</th>
+                                    <th>Avg Response Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usageStatsTable">
+                                <!-- Filled by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Section (hidden by default) -->
+            <div id="transactionsSection" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Transaction History</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Date</th>
+                                    <th>Plan</th>
+                                    <th>Amount</th>
+                                    <th>Payment Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allTransactionsTable">
+                                <!-- Filled by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section (hidden by default) -->
+            <div id="settingsSection" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Account Settings</h3>
+                    </div>
+                    <div style="padding: 20px;">
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="fullName" placeholder="Enter your full name">
                             </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" placeholder="Enter your email" readonly>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="updateProfile()">
+                                <i class="ri-save-line"></i>
+                                Save Changes
+                            </button>
+                        </form>
+
+                        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
+                            <h4 style="margin-bottom: 15px; color: var(--danger);">Danger Zone</h4>
+                            <button class="btn btn-outline" style="color: var(--danger); border-color: var(--danger);" onclick="showDeleteAccountModal()">
+                                <i class="ri-delete-bin-line"></i>
+                                Delete Account
+                            </button>
                         </div>
                     </div>
                 </div>
-            </footer>
+            </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Upgrade Modal -->
+    <div class="modal" id="upgradeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-size: 1.5rem;">Upgrade Your Plan</h3>
+                <button class="close-btn" onclick="hideUpgradeModal()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <p style="color: #64748b; margin-bottom: 20px;">Choose the perfect plan for your needs</p>
+            
+            <div class="pricing-grid" id="pricingGrid">
+                <!-- Filled by JavaScript -->
+            </div>
+
+            <div id="paymentSection" style="display: none; margin-top: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    <select class="form-control" id="paymentMethod">
+                        <option value="qris">QRIS</option>
+                        <option value="gopay">GoPay</option>
+                        <option value="shopeepay">ShopeePay</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="processPayment()">
+                    <i class="ri-shopping-cart-line"></i>
+                    Complete Payment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create API Key Modal -->
+    <div class="modal" id="createApiKeyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-size: 1.5rem;">Create New API Key</h3>
+                <button class="close-btn" onclick="hideCreateApiKeyModal()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <form id="createApiKeyForm">
+                <div class="form-group">
+                    <label class="form-label">Key Name</label>
+                    <input type="text" class="form-control" id="keyName" placeholder="e.g., Production Key, Development Key" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Expiration (Days)</label>
+                    <select class="form-control" id="expirationDays">
+                        <option value="30">30 days</option>
+                        <option value="90">90 days</option>
+                        <option value="180">180 days</option>
+                        <option value="365" selected>365 days (1 year)</option>
+                        <option value="9999">Never expire</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Daily Limit</label>
+                    <input type="number" class="form-control" id="dailyLimit" placeholder="Leave empty for plan default" min="1">
+                    <small style="color: #64748b; font-size: 0.8rem;">Current plan limit: <span id="currentPlanLimit">100</span> requests/day</small>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="ri-key-2-line"></i>
+                    Create API Key
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- New API Key Modal -->
+    <div class="modal" id="newApiKeyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-size: 1.5rem;">New API Key Created</h3>
+                <button class="close-btn" onclick="hideNewApiKeyModal()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div style="text-align: center; padding: 20px 0;">
+                <div class="api-key-display" style="margin: 20px 0;">
+                    <div class="api-key-wrapper">
+                        <div class="api-key-value" id="newApiKeyValue"></div>
+                        <button class="copy-btn" onclick="copyNewApiKey()">
+                            <i class="ri-file-copy-line"></i>
+                        </button>
+                    </div>
+                </div>
+                <p style="color: var(--danger); font-size: 0.9rem;">
+                    <i class="ri-alert-line"></i>
+                    Please copy this API key now. You won't be able to see it again!
+                </p>
+                <button class="btn btn-primary" onclick="hideNewApiKeyModal()">
+                    <i class="ri-check-line"></i>
+                    I've copied the key
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal" id="deleteAccountModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-size: 1.5rem; color: var(--danger);">Delete Account</h3>
+                <button class="close-btn" onclick="hideDeleteAccountModal()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div style="padding: 20px 0;">
+                <p style="color: var(--danger); margin-bottom: 20px;">
+                    <i class="ri-alert-line"></i>
+                    This action cannot be undone. All your data, including API keys and usage history, will be permanently deleted.
+                </p>
+                <div class="form-group">
+                    <label class="form-label">Type "DELETE" to confirm</label>
+                    <input type="text" class="form-control" id="deleteConfirm" placeholder="Type DELETE here">
+                </div>
+                <button class="btn" style="width: 100%; background: var(--danger); color: white;" onclick="deleteAccount()">
+                    <i class="ri-delete-bin-line"></i>
+                    Permanently Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Include Chart.js for usage charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // Global State
-        const state = {
-            currentModel: 'auto',
-            chatHistory: [],
-            activities: [],
-            refreshInterval: null,
-            serverStatus: 'checking'
-        };
+        // Global variables
+        let currentUser = null;
+        let currentPlan = null;
+        let usageChart = null;
+        let currentSection = 'overview';
 
-        // Initialize Dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeTheme();
-            initializeMenu();
-            initializeEventListeners();
-            loadInitialData();
-            startAutoRefresh();
-            
-            console.log('Dashboard v3.6.0 initialized successfully');
-        });
-
-        // Theme Management
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            setTheme(savedTheme);
-            
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
         }
 
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-bs-theme', theme);
-            const icon = document.getElementById('themeIcon');
-            icon.className = theme === 'dark' ? 'ri-moon-line' : 'ri-sun-line';
-            localStorage.setItem('theme', theme);
+        // Get user data from localStorage
+        function getUser() {
+            const userStr = localStorage.getItem('user');
+            return userStr ? JSON.parse(userStr) : null;
         }
 
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-bs-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            setTheme(newTheme);
+        // Initialize dashboard
+        async function initDashboard() {
+            if (!checkAuth()) return;
+
+            currentUser = getUser();
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.full_name || currentUser.email.split('@')[0];
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('userAvatar').textContent = (currentUser.full_name || currentUser.email)[0].toUpperCase();
+                document.getElementById('email').value = currentUser.email;
+                document.getElementById('fullName').value = currentUser.full_name || '';
+                
+                // Update user plan badge
+                const planElement = document.getElementById('userPlan');
+                planElement.textContent = currentUser.plan;
+                planElement.className = `plan-status status-${currentUser.plan === 'free' ? 'active' : 'active'}`;
+            }
+
+            await loadDashboardData();
+            await loadPricingPlans();
         }
 
-        // Menu Management
-        function initializeMenu() {
-            const mobileToggle = document.getElementById('mobileToggle');
-            const menu = document.getElementById('layout-menu');
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.status) {
+                    updateDashboard(data.data);
+                } else {
+                    if (response.status === 401) {
+                        logout();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showNotification('Failed to load dashboard data', 'error');
+            }
+        }
+
+        // Load pricing plans
+        async function loadPricingPlans() {
+            try {
+                const response = await fetch('/api/plans');
+                const data = await response.json();
+
+                if (data.status) {
+                    const pricingGrid = document.getElementById('pricingGrid');
+                    pricingGrid.innerHTML = data.data.map(plan => `
+                        <div class="pricing-card" onclick="selectPlan('${plan.name}')">
+                            <div class="pricing-name">${plan.name.charAt(0).toUpperCase() + plan.name.slice(1)}</div>
+                            <div class="pricing-price">IDR ${plan.price.toLocaleString()}</div>
+                            <ul class="pricing-features">
+                                ${JSON.parse(plan.features).map(feature => `<li><i class="ri-check-line"></i> ${feature}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading pricing plans:', error);
+            }
+        }
+
+        // Update dashboard UI
+        function updateDashboard(data) {
+            // Update user info
+            document.getElementById('userName').textContent = data.user.full_name || data.user.email.split('@')[0];
+            document.getElementById('userEmail').textContent = data.user.email;
+            document.getElementById('userPlan').textContent = data.user.plan;
             
-            mobileToggle.addEventListener('click', function() {
-                menu.classList.toggle('layout-menu-expanded');
-            });
+            // Update stats
+            document.getElementById('totalKeys').textContent = data.stats.active_keys || 0;
+            document.getElementById('totalRequests').textContent = data.usage.today.total_requests || 0;
+            document.getElementById('successRate').textContent = data.stats.success_rate || '100%';
+            document.getElementById('responseTime').textContent = data.stats.avg_response_time || '0ms';
             
-            // Close menu when clicking outside on mobile
-            document.addEventListener('click', function(event) {
-                if (window.innerWidth < 1200) {
-                    if (!menu.contains(event.target) && !mobileToggle.contains(event.target)) {
-                        menu.classList.remove('layout-menu-expanded');
+            // Update API key
+            if (data.primary_api_key) {
+                const apiKey = data.primary_api_key.key_value;
+                document.getElementById('apiKeyValue').textContent = apiKey;
+                localStorage.setItem('apiKey', apiKey);
+                
+                const usagePercent = Math.min(100, (data.usage.today.total_requests / data.primary_api_key.daily_limit) * 100);
+                document.getElementById('usageProgress').style.width = `${usagePercent}%`;
+                document.getElementById('usageText').textContent = 
+                    `${data.usage.today.total_requests} / ${data.primary_api_key.daily_limit}`;
+            }
+
+            // Update plan info
+            currentPlan = data.user.plan;
+            updatePlanInfo(data.user.plan);
+            
+            // Update current plan limit in create modal
+            const planLimit = data.primary_api_key?.daily_limit || 100;
+            document.getElementById('currentPlanLimit').textContent = planLimit;
+
+            // Update transactions
+            updateTransactionsTable(data.transactions);
+        }
+
+        // Update plan info
+        function updatePlanInfo(plan) {
+            const planTitles = {
+                'free': 'Free Plan',
+                'basic': 'Basic Plan',
+                'pro': 'Pro Plan',
+                'enterprise': 'Enterprise Plan'
+            };
+            
+            const planLimits = {
+                'free': '100 requests / day',
+                'basic': '1,000 requests / day',
+                'pro': '5,000 requests / day',
+                'enterprise': 'Unlimited requests'
+            };
+
+            document.getElementById('planName').textContent = planTitles[plan] || 'Free Plan';
+            document.getElementById('planLimit').textContent = planLimits[plan] || '100 requests / day';
+            
+            // Update plan card color
+            const planCard = document.getElementById('planCard');
+            planCard.style.background = plan === 'free' 
+                ? 'linear-gradient(135deg, var(--primary), var(--secondary))'
+                : plan === 'basic'
+                ? 'linear-gradient(135deg, #10b981, #059669)'
+                : plan === 'pro'
+                ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)'
+                : 'linear-gradient(135deg, #f59e0b, #d97706)';
+        }
+
+        // Update transactions table
+        function updateTransactionsTable(transactions) {
+            const tbody = document.getElementById('transactionsTable');
+            const allTbody = document.getElementById('allTransactionsTable');
+            
+            if (!transactions || transactions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #64748b; padding: 40px;">
+                            <i class="ri-bank-card-line" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            No transactions yet
+                        </td>
+                    </tr>
+                `;
+                if (allTbody) {
+                    allTbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #64748b; padding: 40px;">
+                                <i class="ri-bank-card-line" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                No transactions yet
+                            </td>
+                        </tr>
+                    `;
+                }
+                return;
+            }
+
+            // Update recent transactions
+            tbody.innerHTML = transactions.slice(0, 5).map(tx => `
+                <tr>
+                    <td>${new Date(tx.created_at).toLocaleDateString('id-ID')}</td>
+                    <td>${tx.plan}</td>
+                    <td>IDR ${tx.gross_amount ? tx.gross_amount.toLocaleString('id-ID') : '0'}</td>
+                    <td><span class="badge badge-${getStatusBadgeClass(tx.status)}">${tx.status}</span></td>
+                </tr>
+            `).join('');
+
+            // Update all transactions if section is active
+            if (allTbody && currentSection === 'transactions') {
+                allTbody.innerHTML = transactions.map(tx => `
+                    <tr>
+                        <td><code>${tx.transaction_id}</code></td>
+                        <td>${new Date(tx.created_at).toLocaleDateString('id-ID')}</td>
+                        <td>${tx.plan}</td>
+                        <td>IDR ${tx.gross_amount ? tx.gross_amount.toLocaleString('id-ID') : '0'}</td>
+                        <td>${tx.payment_type || '-'}</td>
+                        <td><span class="badge badge-${getStatusBadgeClass(tx.status)}">${tx.status}</span></td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Get badge class for status
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'settlement':
+                case 'success':
+                    return 'success';
+                case 'pending':
+                case 'pending_transfer':
+                    return 'warning';
+                case 'expire':
+                case 'cancel':
+                case 'deny':
+                    return 'danger';
+                default:
+                    return 'warning';
+            }
+        }
+
+        // Load API keys
+        async function loadApiKeys() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/apikeys', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                const apiKeysList = document.getElementById('apiKeysList');
+                
+                if (data.status && data.data.length > 0) {
+                    apiKeysList.innerHTML = data.data.map(key => `
+                        <div class="api-key-item">
+                            <div class="api-key-info">
+                                <h4>${key.name}</h4>
+                                <div class="api-key-meta">
+                                    <span><i class="ri-calendar-line"></i> Created: ${new Date(key.created_at).toLocaleDateString()}</span>
+                                    <span><i class="ri-time-line"></i> Expires: ${key.expires_at ? new Date(key.expires_at).toLocaleDateString() : 'Never'}</span>
+                                    <span><i class="ri-pulse-line"></i> Today: ${key.requests_today}/${key.daily_limit}</span>
+                                    <span class="plan-status status-${key.is_active ? 'active' : 'inactive'}">
+                                        ${key.is_active ? 'Active' : 'Inactive'}
+                                    </span>
+                                </div>
+                                <small style="color: #64748b; font-family: monospace;">${key.key_value.substring(0, 20)}...</small>
+                            </div>
+                            <div class="api-key-actions">
+                                <button class="btn-icon" onclick="toggleApiKey('${key.id}', ${!key.is_active})" title="${key.is_active ? 'Deactivate' : 'Activate'}">
+                                    <i class="ri-${key.is_active ? 'pause' : 'play'}-line"></i>
+                                </button>
+                                <button class="btn-icon" onclick="deleteApiKey('${key.id}')" title="Delete">
+                                    <i class="ri-delete-bin-line" style="color: var(--danger);"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    apiKeysList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="ri-key-2-line"></i>
+                            <h4>No API Keys</h4>
+                            <p>Create your first API key to start using the API</p>
+                            <button class="btn btn-primary" onclick="showCreateApiKeyModal()">
+                                <i class="ri-add-line"></i>
+                                Create API Key
+                            </button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading API keys:', error);
+                document.getElementById('apiKeysList').innerHTML = `
+                    <div class="empty-state">
+                        <i class="ri-error-warning-line"></i>
+                        <h4>Failed to load API keys</h4>
+                        <p>Please try again later</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load usage stats
+        async function loadUsageStats(period = 'daily') {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/user/usage?days=${period === 'daily' ? 1 : period === 'weekly' ? 7 : 30}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                const usageStatsTable = document.getElementById('usageStatsTable');
+                
+                if (data.status && data.data.length > 0) {
+                    usageStatsTable.innerHTML = data.data.map(day => `
+                        <tr>
+                            <td>${new Date(day.date).toLocaleDateString('id-ID')}</td>
+                            <td>${day.total_requests}</td>
+                            <td>${day.error_count > 0 ? `${Math.round(((day.total_requests - day.error_count) / day.total_requests) * 100)}%` : '100%'}</td>
+                            <td>${day.avg_response_time ? Math.round(day.avg_response_time) + 'ms' : 'N/A'}</td>
+                        </tr>
+                    `).join('');
+                    
+                    // Update chart
+                    updateUsageChart(data.data, period);
+                } else {
+                    usageStatsTable.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #64748b; padding: 40px;">
+                                <i class="ri-bar-chart-line" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                No usage data available
+                            </td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading usage stats:', error);
+            }
+        }
+
+        // Update usage chart
+        function updateUsageChart(data, period) {
+            const ctx = document.getElementById('usageChart').getContext('2d');
+            
+            const labels = data.map(d => new Date(d.date).toLocaleDateString('id-ID', { 
+                month: 'short', 
+                day: 'numeric' 
+            }));
+            
+            const requestData = data.map(d => d.total_requests);
+            
+            if (usageChart) {
+                usageChart.destroy();
+            }
+            
+            usageChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Requests',
+                        data: requestData,
+                        borderColor: 'rgb(99, 102, 241)',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
                     }
                 }
             });
-            
-            // Menu toggle functionality
-            document.querySelectorAll('.menu-toggle').forEach(toggle => {
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    this.classList.toggle('active');
-                });
+        }
+
+        // Copy API key
+        function copyApiKey() {
+            const apiKey = document.getElementById('apiKeyValue').textContent;
+            navigator.clipboard.writeText(apiKey).then(() => {
+                showNotification('API key copied to clipboard!', 'success');
             });
         }
 
-        // Event Listeners
-        function initializeEventListeners() {
-            // AI Model selection
-            document.querySelectorAll('[data-model]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('[data-model]').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    state.currentModel = this.dataset.model;
-                    addActivity(`Switched to ${state.currentModel} model`, 'ai');
-                });
-            });
-            
-            // AI Chat
-            document.getElementById('sendAiBtn').addEventListener('click', sendAiMessage);
-            document.getElementById('aiMessage').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendAiMessage();
-                }
-            });
-            
-            // Downloader
-            document.getElementById('downloadBtn').addEventListener('click', processDownload);
-            document.getElementById('mediaUrl').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') processDownload();
-            });
-            
-            // Threads Downloader
-            document.getElementById('threadsDownloadBtn').addEventListener('click', processThreadsDownload);
-            document.getElementById('threadsUrl').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') processThreadsDownload();
-            });
-            
-            // API Tester
-            document.getElementById('testApiBtn').addEventListener('click', testApiEndpoint);
-            document.getElementById('copyUrlBtn').addEventListener('click', copyApiUrl);
-            document.getElementById('endpointSelect').addEventListener('change', updateParamPlaceholder);
-            
-            // Refresh button
-            document.getElementById('refreshBtn').addEventListener('click', refreshDashboard);
-        }
-
-        // Load Initial Data
-        function loadInitialData() {
-            loadServerStatus();
-            loadEndpointStatus();
-            updateSystemMetrics();
-            loadActivityLog();
-            
-            // Add initial activity
-            addActivity('Dashboard v3.6.0 loaded successfully', 'system');
-            addActivity('Threads downloader now available', 'download');
-        }
-
-        // Auto Refresh
-        function startAutoRefresh() {
-            if (state.refreshInterval) clearInterval(state.refreshInterval);
-            
-            state.refreshInterval = setInterval(() => {
-                loadServerStatus();
-                updateSystemMetrics();
-            }, 10000); // Refresh every 10 seconds
-        }
-
-        // Server Status
-        async function loadServerStatus() {
-            try {
-                const response = await fetch('/api/status');
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
-                const data = await response.json();
-                
-                if (data.status) {
-                    updateServerStatusUI(data.data);
-                    state.serverStatus = 'online';
-                }
-            } catch (error) {
-                console.warn('Server status check failed:', error);
-                state.serverStatus = 'offline';
-                updateServerStatusUI(null);
-            }
-        }
-
-        function updateServerStatusUI(data) {
-            const indicator = document.getElementById('statusIndicator');
-            const uptimeElement = document.getElementById('serverUptime');
-            
-            if (data) {
-                indicator.style.background = 'var(--success-color)';
-                
-                // Format uptime
-                const uptime = data.server.uptime;
-                const days = Math.floor(uptime / 86400);
-                const hours = Math.floor((uptime % 86400) / 3600);
-                const minutes = Math.floor((uptime % 3600) / 60);
-                uptimeElement.textContent = `${days}d ${hours}h ${minutes}m`;
-                
-                // Update system metrics
-                document.getElementById('cpuUsage').textContent = `${data.memory.usage_percent}%`;
-                document.getElementById('cpuBar').style.width = `${data.memory.usage_percent}%`;
-                document.getElementById('memoryUsage').textContent = `${data.memory.usage_percent}%`;
-                document.getElementById('memoryBar').style.width = `${data.memory.usage_percent}%`;
-            } else {
-                indicator.style.background = 'var(--danger-color)';
-                uptimeElement.textContent = 'Offline';
-            }
-        }
-
-        // Endpoint Status
-        async function loadEndpointStatus() {
-            const endpoints = [
-                { name: 'Deepseek AI', path: '/api/deepseek?q=test', method: 'GET' },
-                { name: 'Copilot AI', path: '/api/copilot?text=test', method: 'GET' },
-                { name: 'GPT-5 AI', path: '/api/gpt5?text=test', method: 'GET' },
-                { name: 'Instagram', path: '/api/instagram?url=', method: 'GET' },
-                { name: 'Facebook', path: '/api/facebook?url=', method: 'GET' },
-                { name: 'Threads', path: '/api/threads?url=', method: 'GET' },
-                { name: 'Spotify', path: '/api/spotify?url=https://open.spotify.com/track/3k68kVFWTTBP0Jb4LOzCax', method: 'GET' },
-                { name: 'YouTube Audio', path: '/api/youtube/audio?url=https://youtu.be/HWjCStB6k4o', method: 'GET' },
-                { name: 'YouTube Video', path: '/api/youtube/video?url=https://youtu.be/HWjCStB6k4o', method: 'GET' },
-                { name: 'Server Status', path: '/api/status', method: 'GET' }
-            ];
-            
-            let html = '';
-            
-            for (const endpoint of endpoints) {
-                try {
-                    const startTime = Date.now();
-                    const response = await fetch(endpoint.path);
-                    const endTime = Date.now();
-                    
-                    const status = response.status;
-                    const responseTime = endTime - startTime;
-                    const statusClass = status === 200 ? 'success' : 'warning';
-                    const statusText = status === 200 ? 'Online' : 'Error';
-                    
-                    html += `
-                        <div class="activity-item">
-                            <div class="activity-icon bg-${statusClass}">
-                                <i class="ri-plug-line"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">${endpoint.name}</div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">${endpoint.method} ${endpoint.path.split('?')[0]}</small>
-                                    <div>
-                                        <small class="text-muted me-2">${responseTime}ms</small>
-                                        <span class="badge bg-${statusClass}">${statusText}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                } catch (error) {
-                    html += `
-                        <div class="activity-item">
-                            <div class="activity-icon bg-danger">
-                                <i class="ri-plug-line"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">${endpoint.name}</div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">${endpoint.method} ${endpoint.path.split('?')[0]}</small>
-                                    <span class="badge bg-danger">Offline</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-            
-            document.getElementById('endpointStatus').innerHTML = html;
-            addActivity('Endpoint status updated', 'system');
-        }
-
-        // System Metrics
-        function updateSystemMetrics() {
-            // Simulate metrics update
-            const cpu = Math.floor(Math.random() * 30) + 20;
-            const memory = Math.floor(Math.random() * 30) + 40;
-            const requests = Math.floor(Math.random() * 1000) + 500;
-            
-            document.getElementById('cpuUsage').textContent = `${cpu}%`;
-            document.getElementById('cpuBar').style.width = `${cpu}%`;
-            document.getElementById('memoryUsage').textContent = `${memory}%`;
-            document.getElementById('memoryBar').style.width = `${memory}%`;
-            document.getElementById('totalRequests').textContent = `${(requests / 1000).toFixed(1)}K`;
-            
-            // Update response time
-            const responseTime = Math.floor(Math.random() * 50) + 20;
-            document.getElementById('responseTime').textContent = `${responseTime}ms`;
-        }
-
-        // AI Chat
-        async function sendAiMessage() {
-            const input = document.getElementById('aiMessage');
-            const message = input.value.trim();
-            
-            if (!message) {
-                alert('Please enter a message');
-                return;
-            }
-            
-            // Disable button and show loading
-            const btn = document.getElementById('sendAiBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="ri-loader-4-line spin me-2"></i>Sending...';
-            btn.disabled = true;
-            
-            // Add user message
-            addChatMessage('user', message);
-            input.value = '';
-            
-            // Show thinking message
-            const thinkingId = addChatMessage('ai', 'Thinking...', true);
-            
-            try {
-                let apiUrl;
-                switch(state.currentModel) {
-                    case 'deepseek':
-                        apiUrl = `/api/deepseek?q=${encodeURIComponent(message)}`;
-                        break;
-                    case 'copilot':
-                        apiUrl = `/api/copilot?text=${encodeURIComponent(message)}`;
-                        break;
-                    case 'gpt5':
-                        apiUrl = `/api/gpt5?text=${encodeURIComponent(message)}`;
-                        break;
-                    default:
-                        apiUrl = `/api/ai/chat?text=${encodeURIComponent(message)}&model=auto`;
-                }
-                
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                
-                // Remove thinking message
-                document.getElementById(thinkingId)?.remove();
-                
-                // Add AI response
-                let aiResponse;
-                if (state.currentModel === 'deepseek') {
-                    aiResponse = data.data?.response || data.message;
-                } else {
-                    aiResponse = data.result || data.data?.result || data.message;
-                }
-                
-                addChatMessage('ai', aiResponse);
-                updateResponseInfo(`Response from ${state.currentModel} model`);
-                
-                // Add to history
-                state.chatHistory.push({
-                    user: message,
-                    ai: aiResponse,
-                    model: state.currentModel,
-                    timestamp: new Date()
-                });
-                
-                addActivity(`AI chat: ${message.substring(0, 30)}...`, 'ai');
-                
-            } catch (error) {
-                document.getElementById(thinkingId)?.remove();
-                addChatMessage('ai', `Error: ${error.message}. Please try again.`);
-                updateResponseInfo('Error occurred');
-                addActivity('AI chat failed', 'error');
-            } finally {
-                // Restore button
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        function addChatMessage(sender, content, isThinking = false) {
-            const container = document.getElementById('chatContainer');
-            const messageId = 'msg-' + Date.now();
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${sender}`;
-            messageDiv.id = messageId;
-            
-            if (isThinking) {
-                messageDiv.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                        ${content}
-                    </div>
-                `;
-            } else {
-                messageDiv.textContent = content;
-            }
-            
-            container.appendChild(messageDiv);
-            container.scrollTop = container.scrollHeight;
-            
-            return messageId;
-        }
-
-        function updateResponseInfo(text) {
-            document.getElementById('responseInfo').textContent = text;
-        }
-
-        // Downloader
-        async function processDownload() {
-            const urlInput = document.getElementById('mediaUrl');
-            const platform = document.getElementById('downloadPlatform').value;
-            const quality = document.getElementById('downloadQuality').value;
-            const url = urlInput.value.trim();
-            
-            if (!url) {
-                alert('Please enter a URL');
-                return;
-            }
-            
-            // Show loading
-            const resultDiv = document.getElementById('downloadResult');
-            resultDiv.innerHTML = `
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="mt-3">Processing download...</p>
-                </div>
-            `;
-            
-            // Disable button
-            const btn = document.getElementById('downloadBtn');
-            btn.disabled = true;
-            
-            try {
-                let apiUrl;
-                if (platform === 'auto') {
-                    apiUrl = `/api/download?url=${encodeURIComponent(url)}&quality=${quality}`;
-                } else if (platform === 'youtube') {
-                    apiUrl = `/api/youtube/video?url=${encodeURIComponent(url)}&quality=${quality}`;
-                } else if (platform === 'spotify') {
-                    apiUrl = `/api/spotify?url=${encodeURIComponent(url)}&quality=${quality}`;
-                } else {
-                    apiUrl = `/api/${platform}?url=${encodeURIComponent(url)}`;
-                }
-                
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                
-                if (data.status) {
-                    showDownloadResult(data, platform);
-                    addActivity(`Download from ${platform}: ${url.substring(0, 30)}...`, 'download');
-                } else {
-                    throw new Error(data.message || 'Download failed');
-                }
-            } catch (error) {
-                resultDiv.innerHTML = `
-                    <div class="text-center py-4">
-                        <i class="ri-error-warning-line text-danger" style="font-size: 3rem;"></i>
-                        <h6 class="mt-3">Download Failed</h6>
-                        <p class="text-muted">${error.message}</p>
-                    </div>
-                `;
-                addActivity(`Download failed: ${error.message}`, 'error');
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        function showDownloadResult(data, platform) {
-            const result = data.result || data.data;
-            let html = '<div class="text-start">';
-            
-            html += '<div class="alert alert-success mb-3">Download successful!</div>';
-            
-            if (result.title || result.metadata?.title) {
-                html += `<p><strong>Title:</strong> ${result.title || result.metadata.title}</p>`;
-            }
-            
-            if (result.durasi || result.metadata?.duration) {
-                html += `<p><strong>Duration:</strong> ${result.durasi || result.metadata.duration.timestamp}</p>`;
-            }
-            
-            if (result.thumbnail || result.metadata?.thumbnail) {
-                html += `
-                    <div class="mb-3">
-                        <img src="${result.thumbnail || result.metadata.thumbnail}" alt="Thumbnail" class="img-fluid rounded" style="max-height: 120px;">
-                    </div>
-                `;
-            }
-            
-            if (result.download || result.download?.url) {
-                html += '<div class="mt-3"><strong>Download Options:</strong></div>';
-                
-                if (result.download.hd) {
-                    html += `
-                        <a href="${result.download.hd}" target="_blank" class="download-option">
-                            <i class="download-icon ri-hd-line"></i>
-                            <div>HD Quality</div>
-                            <small class="text-muted">High Definition</small>
-                        </a>
-                    `;
-                }
-                
-                if (result.download.sd) {
-                    html += `
-                        <a href="${result.download.sd}" target="_blank" class="download-option">
-                            <i class="download-icon ri-video-line"></i>
-                            <div>SD Quality</div>
-                            <small class="text-muted">Standard Definition</small>
-                        </a>
-                    `;
-                }
-                
-                if (result.download.url) {
-                    html += `
-                        <a href="${result.download.url}" target="_blank" class="download-option">
-                            <i class="download-icon ri-download-line"></i>
-                            <div>Download File</div>
-                            <small class="text-muted">${result.download.quality || 'Best Quality'}</small>
-                        </a>
-                    `;
-                }
-            }
-            
-            html += '</div>';
-            document.getElementById('downloadResult').innerHTML = html;
-        }
-
-        // Threads Downloader
-        async function processThreadsDownload() {
-            const urlInput = document.getElementById('threadsUrl');
-            const url = urlInput.value.trim();
-            
-            if (!url) {
-                alert('Please enter a Threads URL');
-                return;
-            }
-            
-            // Validate URL
-            if (!url.includes('threads.com') && !url.includes('threads.net')) {
-                alert('Please enter a valid Threads URL');
-                return;
-            }
-            
-            // Show loading
-            const btn = document.getElementById('threadsDownloadBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="ri-loader-4-line spin me-2"></i>Downloading...';
-            btn.disabled = true;
-            
-            const resultDiv = document.getElementById('threadsResult');
-            const galleryDiv = document.getElementById('threadsGallery');
-            const infoDiv = document.getElementById('threadsInfo');
-            
-            resultDiv.innerHTML = `
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="mt-3">Downloading Threads images...</p>
-                </div>
-            `;
-            galleryDiv.style.display = 'none';
-            infoDiv.style.display = 'none';
-            
-            try {
-                const apiUrl = `/api/threads?url=${encodeURIComponent(url)}`;
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                
-                if (data.status && data.result?.media) {
-                    displayThreadsImages(data.result.media);
-                    addActivity(`Threads download: ${url.substring(0, 30)}...`, 'download');
-                } else {
-                    throw new Error(data.message || 'No images found');
-                }
-            } catch (error) {
-                resultDiv.innerHTML = `
-                    <div class="text-center py-4">
-                        <i class="ri-error-warning-line text-danger" style="font-size: 3rem;"></i>
-                        <h6 class="mt-3">Download Failed</h6>
-                        <p class="text-muted">${error.message}</p>
-                    </div>
-                `;
-                addActivity(`Threads download failed: ${error.message}`, 'error');
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        function displayThreadsImages(media) {
-            const resultDiv = document.getElementById('threadsResult');
-            const galleryDiv = document.getElementById('threadsGallery');
-            const infoDiv = document.getElementById('threadsInfo');
-            const countDiv = document.getElementById('threadsCount');
-            
-            if (!media || media.length === 0) {
-                resultDiv.innerHTML = `
-                    <div class="text-center py-4">
-                        <i class="ri-image-line text-muted" style="font-size: 3rem;"></i>
-                        <p class="mt-3">No images found in this Threads post</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Update count
-            countDiv.textContent = `${media.length} images`;
-            
-            // Hide result message and show gallery
-            resultDiv.style.display = 'none';
-            
-            // Build gallery
-            let galleryHTML = '';
-            media.forEach((item, index) => {
-                galleryHTML += `
-                    <div class="media-item">
-                        <a href="${item.url}" target="_blank" download="threads-image-${index + 1}.jpg">
-                            <img src="${item.thumb || item.url}" alt="Threads Image ${index + 1}" loading="lazy">
-                            <div class="media-overlay">
-                                <div class="d-flex justify-content-between">
-                                    <span>Image ${index + 1}</span>
-                                    <span><i class="ri-download-line"></i></span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                `;
-            });
-            
-            galleryDiv.innerHTML = galleryHTML;
-            galleryDiv.style.display = 'grid';
-            infoDiv.style.display = 'block';
-        }
-
-        // API Tester
-        function updateParamPlaceholder() {
-            const select = document.getElementById('endpointSelect');
-            const paramInput = document.getElementById('paramValue');
-            const endpoint = select.value;
-            
-            if (endpoint.includes('status') || endpoint.includes('health') || endpoint.includes('info')) {
-                paramInput.style.display = 'none';
-                paramInput.previousElementSibling.style.display = 'none';
-            } else {
-                paramInput.style.display = 'block';
-                paramInput.previousElementSibling.style.display = 'block';
-                
-                // Set placeholder based on endpoint
-                if (endpoint.includes('deepseek')) {
-                    paramInput.placeholder = 'Enter your question...';
-                } else if (endpoint.includes('copilot') || endpoint.includes('gpt5')) {
-                    paramInput.placeholder = 'Enter your message...';
-                } else if (endpoint.includes('threads')) {
-                    paramInput.placeholder = 'Enter Threads post URL...';
-                } else if (endpoint.includes('youtube')) {
-                    paramInput.placeholder = 'Enter YouTube URL...';
-                } else if (endpoint.includes('spotify')) {
-                    paramInput.placeholder = 'Enter Spotify track URL...';
-                } else {
-                    paramInput.placeholder = 'Enter URL...';
-                }
-            }
-        }
-
-        async function testApiEndpoint() {
-            const select = document.getElementById('endpointSelect');
-            const paramInput = document.getElementById('paramValue');
-            let endpoint = select.value;
-            
-            // Validate
-            if (!endpoint.includes('status') && !endpoint.includes('health') && !endpoint.includes('info') && !paramInput.value.trim()) {
-                alert('Please enter a parameter value');
-                return;
-            }
-            
-            // Build URL
-            if (!endpoint.includes('status') && !endpoint.includes('health') && !endpoint.includes('info')) {
-                endpoint += encodeURIComponent(paramInput.value);
-            }
-            
-            // Update UI
-            const testBtn = document.getElementById('testApiBtn');
-            const originalText = testBtn.innerHTML;
-            testBtn.innerHTML = '<i class="ri-loader-4-line spin me-2"></i>Testing...';
-            testBtn.disabled = true;
-            
-            const responseDiv = document.getElementById('apiResponse');
-            const statusEl = document.getElementById('responseStatus');
-            const timeEl = document.getElementById('apiResponseTime');
-            
-            responseDiv.textContent = 'Testing endpoint...';
-            statusEl.textContent = 'Status: Testing...';
-            timeEl.textContent = 'Time: --';
-            
-            try {
-                const startTime = Date.now();
-                const response = await fetch(endpoint);
-                const endTime = Date.now();
-                
-                const data = await response.json();
-                const responseTime = endTime - startTime;
-                
-                // Format JSON
-                responseDiv.textContent = JSON.stringify(data, null, 2);
-                statusEl.textContent = `Status: ${response.status} ${response.ok ? '✓' : '✗'}`;
-                timeEl.textContent = `Time: ${responseTime}ms`;
-                
-                addActivity(`Tested ${endpoint.split('?')[0]}`, 'api');
-                
-            } catch (error) {
-                responseDiv.textContent = JSON.stringify({
-                    error: error.message,
-                    status: false,
-                    timestamp: new Date().toISOString()
-                }, null, 2);
-                
-                statusEl.textContent = 'Status: Network Error';
-                timeEl.textContent = 'Time: --';
-                
-                addActivity(`API test failed: ${error.message}`, 'error');
-            } finally {
-                testBtn.innerHTML = originalText;
-                testBtn.disabled = false;
-            }
-        }
-
-        function copyApiUrl() {
-            const select = document.getElementById('endpointSelect');
-            const paramInput = document.getElementById('paramValue');
-            let endpoint = select.value;
-            
-            if (!endpoint.includes('status') && !endpoint.includes('health') && !endpoint.includes('info') && paramInput.value.trim()) {
-                endpoint += encodeURIComponent(paramInput.value);
-            }
-            
-            const fullUrl = window.location.origin + endpoint;
-            
-            navigator.clipboard.writeText(fullUrl).then(() => {
-                const btn = document.getElementById('copyUrlBtn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="ri-check-line me-2"></i>Copied!';
-                
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                }, 2000);
+        // Copy new API key
+        function copyNewApiKey() {
+            const apiKey = document.getElementById('newApiKeyValue').textContent;
+            navigator.clipboard.writeText(apiKey).then(() => {
+                showNotification('API key copied to clipboard!', 'success');
             });
         }
 
-        // Activity Log
-        function loadActivityLog() {
-            const initialActivities = [
-                { type: 'system', message: 'Dashboard v3.6.0 initialized', time: 'Just now' },
-                { type: 'download', message: 'Threads downloader added', time: '2 minutes ago' },
-                { type: 'ai', message: 'All AI models loaded successfully', time: '5 minutes ago' },
-                { type: 'api', message: 'All API endpoints online', time: '10 minutes ago' },
-                { type: 'download', message: 'YouTube video downloader working', time: '15 minutes ago' },
-                { type: 'download', message: 'Spotify audio downloader ready', time: '20 minutes ago' }
-            ];
-            
-            state.activities = initialActivities;
-            renderActivityLog();
-        }
-
-        function addActivity(message, type) {
-            const activity = {
-                type: type,
-                message: message,
-                time: 'Just now',
-                timestamp: new Date()
-            };
-            
-            state.activities.unshift(activity);
-            
-            // Keep only last 10 activities
-            if (state.activities.length > 10) {
-                state.activities.pop();
-            }
-            
-            renderActivityLog();
-        }
-
-        function renderActivityLog() {
-            const container = document.getElementById('activityLog');
-            let html = '';
-            
-            state.activities.forEach(activity => {
-                let icon = 'ri-information-line';
-                let color = 'primary';
-                
-                switch(activity.type) {
-                    case 'ai': icon = 'ri-robot-line'; color = 'success'; break;
-                    case 'download': icon = 'ri-download-cloud-line'; color = 'info'; break;
-                    case 'api': icon = 'ri-code-s-slash-line'; color = 'warning'; break;
-                    case 'error': icon = 'ri-error-warning-line'; color = 'danger'; break;
-                    case 'system': icon = 'ri-server-line'; color = 'primary'; break;
-                }
-                
-                html += `
-                    <div class="activity-item">
-                        <div class="activity-icon bg-${color}">
-                            <i class="${icon}"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">${activity.message}</div>
-                            <div class="activity-time">${activity.time}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        // Utility Functions
-        function scrollToSection(sectionId) {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-                
-                // Close mobile menu if open
-                if (window.innerWidth < 1200) {
-                    document.getElementById('layout-menu').classList.remove('layout-menu-expanded');
-                }
-            }
-        }
-
-        function refreshDashboard() {
-            const btn = document.getElementById('refreshBtn');
-            const originalText = btn.innerHTML;
-            
-            btn.innerHTML = '<i class="ri-loader-4-line spin me-2"></i>Refreshing...';
-            btn.disabled = true;
-            
-            // Refresh all data
-            loadServerStatus();
-            loadEndpointStatus();
-            updateSystemMetrics();
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
             
             setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                addActivity('Dashboard refreshed', 'system');
-            }, 1000);
+                notification.classList.remove('show');
+            }, 3000);
         }
 
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('theme');
-                window.location.href = 'index.html';
+        // Refresh data
+        function refreshData() {
+            if (currentSection === 'overview') {
+                loadDashboardData();
+            } else if (currentSection === 'apikeys') {
+                loadApiKeys();
+            } else if (currentSection === 'usage') {
+                loadUsageStats('daily');
+            } else if (currentSection === 'transactions') {
+                loadDashboardData();
             }
+            showNotification('Data refreshed!', 'success');
         }
 
-        // Add CSS for spinner animation
-        const style = document.createElement('style');
-        style.textContent = `
-            .spin {
-                animation: spin 1s linear infinite;
-            }
+        // Show section
+        async function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('[id$="Section"]').forEach(el => {
+                el.style.display = 'none';
+            });
             
-            @keyframes spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
+            // Update active menu
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update page title
+            const titles = {
+                'overview': 'Dashboard Overview',
+                'apikeys': 'API Keys Management',
+                'usage': 'Usage Statistics',
+                'transactions': 'Transaction History',
+                'settings': 'Account Settings'
+            };
+            document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
+            
+            // Show selected section
+            document.getElementById(section + 'Section').style.display = 'block';
+            currentSection = section;
+            
+            // Load section data
+            switch(section) {
+                case 'overview':
+                    await loadDashboardData();
+                    break;
+                case 'apikeys':
+                    await loadApiKeys();
+                    break;
+                case 'usage':
+                    await loadUsageStats('daily');
+                    break;
+                case 'transactions':
+                    await loadDashboardData();
+                    break;
             }
-        `;
-        document.head.appendChild(style);
-        
-        // Initialize
-        updateParamPlaceholder();
+        }
+
+        // Show upgrade modal
+        function showUpgradeModal() {
+            document.getElementById('upgradeModal').classList.add('show');
+            document.getElementById('paymentSection').style.display = 'none';
+        }
+
+        // Hide upgrade modal
+        function hideUpgradeModal() {
+            document.getElementById('upgradeModal').classList.remove('show');
+        }
+
+        // Select plan
+        function selectPlan(plan) {
+            document.querySelectorAll('.pricing-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById('paymentSection').style.display = 'block';
+            localStorage.setItem('selectedPlan', plan);
+        }
+
+        // Process payment
+        async function processPayment() {
+            const plan = localStorage.getItem('selectedPlan');
+            if (!plan) {
+                showNotification('Please select a plan', 'error');
+                return;
+            }
+
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/payment/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ 
+                        plan,
+                        payment_method: paymentMethod
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status) {
+                    showNotification('Payment initiated! Redirecting...', 'success');
+                    setTimeout(() => {
+                        if (data.data.redirect_url) {
+                            window.location.href = data.data.redirect_url;
+                        } else {
+                            // If no redirect URL, show payment instructions
+                            showNotification('Please complete the payment using the provided instructions', 'success');
+                            hideUpgradeModal();
+                        }
+                    }, 2000);
+                } else {
+                    showNotification(data.message || 'Payment creation failed', 'error');
+                }
+            } catch (error) {
+                showNotification('Error creating payment', 'error');
+            }
+        }
+
+        // Show create API key modal
+        function showCreateApiKeyModal() {
+            document.getElementById('createApiKeyModal').classList.add('show');
+        }
+
+        // Hide create API key modal
+        function hideCreateApiKeyModal() {
+            document.getElementById('createApiKeyModal').classList.remove('show');
+        }
+
+        // Create API key
+        document.getElementById('createApiKeyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const keyName = document.getElementById('keyName').value;
+            const expirationDays = parseInt(document.getElementById('expirationDays').value);
+            const dailyLimit = document.getElementById('dailyLimit').value;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/apikeys/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        name: keyName,
+                        expires_in: expirationDays,
+                        daily_limit: dailyLimit || null
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status) {
+                    hideCreateApiKeyModal();
+                    
+                    // Show new API key modal
+                    document.getElementById('newApiKeyValue').textContent = data.data.key_value;
+                    document.getElementById('newApiKeyModal').classList.add('show');
+                    
+                    // Reset form
+                    document.getElementById('createApiKeyForm').reset();
+                    
+                    // Reload API keys list if in apikeys section
+                    if (currentSection === 'apikeys') {
+                        await loadApiKeys();
+                    }
+                    
+                    // Reload dashboard data
+                    await loadDashboardData();
+                } else {
+                    showNotification(data.message || 'Failed to create API key', 'error');
+                }
+            } catch (error) {
+                showNotification('Error creating API key', 'error');
+            }
+        });
+
+        // Hide new API key modal
+        function hideNewApiKeyModal() {
+            document.getElementById('newApiKeyModal').classList.remove('show');
+        }
+
+        // Toggle API key status
+        async function toggleApiKey(keyId, newStatus) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/user/apikeys/${keyId}/toggle`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        is_active: newStatus
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status) {
+                    showNotification(`API key ${newStatus ? 'activated' : 'deactivated'}!`, 'success');
+                    await loadApiKeys();
+                    await loadDashboardData();
+                } else {
+                    showNotification(data.message || 'Failed to update API key', 'error');
+                }
+            } catch (error) {
+                showNotification('Error updating API key', 'error');
+            }
+        }
+
+        // Delete API key
+        async function deleteApiKey(keyId) {
+            if (!confirm('Are you sure you want to delete this API key? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/user/apikeys/${keyId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.status) {
+                    showNotification('API key deleted!', 'success');
+                    await loadApiKeys();
+                    await loadDashboardData();
+                } else {
+                    showNotification(data.message || 'Failed to delete API key', 'error');
+                }
+            } catch (error) {
+                showNotification('Error deleting API key', 'error');
+            }
+        }
+
+        // Show usage tab
+        function showUsageTab(period) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            loadUsageStats(period);
+        }
+
+        // Update profile
+        async function updateProfile() {
+            const fullName = document.getElementById('fullName').value;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        full_name: fullName
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status) {
+                    showNotification('Profile updated!', 'success');
+                    localStorage.setItem('user', JSON.stringify(data.data));
+                    await initDashboard();
+                } else {
+                    showNotification(data.message || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                showNotification('Error updating profile', 'error');
+            }
+        }
+
+        // Show delete account modal
+        function showDeleteAccountModal() {
+            document.getElementById('deleteAccountModal').classList.add('show');
+        }
+
+        // Hide delete account modal
+        function hideDeleteAccountModal() {
+            document.getElementById('deleteAccountModal').classList.remove('show');
+            document.getElementById('deleteConfirm').value = '';
+        }
+
+        // Delete account
+        async function deleteAccount() {
+            const confirmText = document.getElementById('deleteConfirm').value;
+            if (confirmText !== 'DELETE') {
+                showNotification('Please type "DELETE" to confirm', 'error');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/user/account', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.status) {
+                    showNotification('Account deleted successfully', 'success');
+                    setTimeout(() => {
+                        logout();
+                    }, 2000);
+                } else {
+                    showNotification(data.message || 'Failed to delete account', 'error');
+                }
+            } catch (error) {
+                showNotification('Error deleting account', 'error');
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initDashboard);
     </script>
 </body>
 </html>
