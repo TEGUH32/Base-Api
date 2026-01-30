@@ -66,27 +66,27 @@
             margin-bottom: 30px;
         }
 
-        .plans {
+        .features {
             display: flex;
             flex-direction: column;
             gap: 15px;
+            margin-top: 30px;
         }
 
-        .plan {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .plan-title {
-            font-weight: 700;
-            margin-bottom: 5px;
+        .feature i {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
         }
 
-        .plan-desc {
-            font-size: 0.85rem;
-            opacity: 0.8;
+        .feature span {
+            font-size: 0.95rem;
+            opacity: 0.9;
         }
 
         .right-panel {
@@ -215,9 +215,13 @@
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
@@ -270,6 +274,125 @@
             border-left: 4px solid #059669;
         }
 
+        /* API Key Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .modal-subtitle {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .api-key-display {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed var(--border);
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            text-align: left;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .modal-note {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .modal-note i {
+            color: #f97316;
+            margin-right: 8px;
+        }
+
+        .modal-note p {
+            font-size: 0.85rem;
+            color: #92400e;
+            margin: 5px 0;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .modal-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -279,6 +402,11 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @media (max-width: 768px) {
@@ -297,31 +425,36 @@
             .right-panel {
                 padding: 40px;
             }
-
-            .plans {
-                display: none;
-            }
         }
     </style>
-<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+    <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="left-panel">
-            <h1>Start Your Journey</h1>
-            <p>Create your account and start using our powerful API with 100 free requests every day!</p>
-            <div class="plans">
-                <div class="plan">
-                    <div class="plan-title">🆓 Free Plan</div>
-                    <div class="plan-desc">100 requests/day - Perfect for testing</div>
+            <h1>Start Your API Journey</h1>
+            <p>Create your account and get instant access to powerful APIs with 100 free requests every day!</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="ri-check-line"></i>
+                    <span>No email verification required</span>
                 </div>
-                <div class="plan">
-                    <div class="plan-title">⭐ Basic - IDR 49K</div>
-                    <div class="plan-desc">1,000 requests/day - For small projects</div>
+                <div class="feature">
+                    <i class="ri-check-line"></i>
+                    <span>Instant API Key generation</span>
                 </div>
-                <div class="plan">
-                    <div class="plan-title">🚀 Pro - IDR 99K</div>
-                    <div class="plan-desc">5,000 requests/day - For growing apps</div>
+                <div class="feature">
+                    <i class="ri-check-line"></i>
+                    <span>100 free requests daily</span>
+                </div>
+                <div class="feature">
+                    <i class="ri-check-line"></i>
+                    <span>Access to all API endpoints</span>
+                </div>
+                <div class="feature">
+                    <i class="ri-check-line"></i>
+                    <span>Real-time usage dashboard</span>
                 </div>
             </div>
         </div>
@@ -333,7 +466,7 @@
             </div>
 
             <h2>Create Account</h2>
-            <p class="subtitle">Join thousands of developers using our API</p>
+            <p class="subtitle">Join thousands of developers building with our APIs</p>
 
             <div class="alert alert-danger" id="errorAlert"></div>
             <div class="alert alert-success" id="successAlert"></div>
@@ -359,7 +492,7 @@
                     <label>Password</label>
                     <div class="input-wrapper">
                         <i class="ri-lock-line"></i>
-                        <input type="password" id="password" placeholder="Create a password" required>
+                        <input type="password" id="password" placeholder="Create a password (min. 6 characters)" required>
                     </div>
                     <div class="password-strength">
                         <div class="password-strength-bar" id="strengthBar"></div>
@@ -379,12 +512,37 @@
             </form>
 
             <div class="footer-links">
-                <p>Already have an account? <a href="login.html">Sign in</a></p>
+                <p>Already have an account? <a href="login.html">Sign in here</a></p>
             </div>
         </div>
     </div>
 
+    <!-- API Key Modal -->
+    <div class="modal" id="apiKeyModal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎉 Welcome to API Teguh!</h2>
+            <p class="modal-subtitle">Your account has been created successfully</p>
+            
+            <div class="api-key-display">
+                <div id="apiKeyValue">Loading API Key...</div>
+                <button class="copy-btn" onclick="copyApiKey()">
+                    <i class="ri-file-copy-line"></i> Copy
+                </button>
+            </div>
+
+            <div class="modal-note">
+                <p><i class="ri-alert-line"></i> <strong>Important:</strong> Save your API Key now!</p>
+                <p>You won't be able to see this key again. Store it in a secure location.</p>
+            </div>
+
+            <button class="modal-btn" onclick="goToDashboard()">
+                <i class="ri-dashboard-line"></i> Go to Dashboard
+            </button>
+        </div>
+    </div>
+
     <script>
+        // DOM Elements
         const registerForm = document.getElementById('registerForm');
         const registerBtn = document.getElementById('registerBtn');
         const btnText = document.getElementById('btnText');
@@ -394,7 +552,13 @@
         const passwordInput = document.getElementById('password');
         const strengthBar = document.getElementById('strengthBar');
         const strengthText = document.getElementById('strengthText');
+        const apiKeyModal = document.getElementById('apiKeyModal');
+        const apiKeyValue = document.getElementById('apiKeyValue');
 
+        // State
+        let generatedApiKey = null;
+
+        // Show alert
         function showAlert(message, type) {
             if (type === 'error') {
                 errorAlert.textContent = message;
@@ -405,8 +569,15 @@
                 successAlert.classList.add('show');
                 errorAlert.classList.remove('show');
             }
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorAlert.classList.remove('show');
+                successAlert.classList.remove('show');
+            }, 5000);
         }
 
+        // Set loading state
         function setLoading(loading) {
             registerBtn.disabled = loading;
             if (loading) {
@@ -420,16 +591,19 @@
             }
         }
 
+        // Check password strength
         function checkPasswordStrength(password) {
             let strength = 0;
+            if (password.length >= 6) strength++;
             if (password.length >= 8) strength++;
             if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
             if (password.match(/\d/)) strength++;
             if (password.match(/[^a-zA-Z\d]/)) strength++;
 
-            return strength;
+            return Math.min(strength, 4);
         }
 
+        // Update password strength meter
         passwordInput.addEventListener('input', (e) => {
             const password = e.target.value;
             const strength = checkPasswordStrength(password);
@@ -438,61 +612,168 @@
             const labels = ['Weak', 'Fair', 'Good', 'Strong'];
 
             strengthBar.style.width = `${(strength / 4) * 100}%`;
-            strengthBar.style.background = colors[strength - 1] || colors[0];
+            strengthBar.style.backgroundColor = colors[strength - 1] || colors[0];
             strengthText.textContent = labels[strength - 1] || 'Password strength';
+            strengthText.style.color = colors[strength - 1] || '#64748b';
         });
 
+        // Show API Key modal
+        function showApiKeyModal(apiKey) {
+            generatedApiKey = apiKey;
+            apiKeyValue.textContent = apiKey;
+            apiKeyModal.classList.add('show');
+            
+            // Auto-copy to clipboard
+            setTimeout(() => {
+                copyApiKey();
+            }, 500);
+        }
+
+        // Hide API Key modal
+        function hideApiKeyModal() {
+            apiKeyModal.classList.remove('show');
+        }
+
+        // Copy API Key to clipboard
+        function copyApiKey() {
+            if (!generatedApiKey) return;
+            
+            navigator.clipboard.writeText(generatedApiKey).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="ri-check-line"></i> Copied!';
+                copyBtn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                    copyBtn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        // Go to dashboard
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Validate email format
+        function validateEmail(email) {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        // Handle form submission
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const fullName = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+            const terms = document.getElementById('terms').checked;
 
-            if (password.length < 6) {
-                showAlert('Password must be at least 6 characters', 'error');
+            // Validation
+            if (!fullName) {
+                showAlert('Please enter your full name', 'error');
+                document.getElementById('fullName').focus();
                 return;
             }
 
+            if (!validateEmail(email)) {
+                showAlert('Please enter a valid email address', 'error');
+                document.getElementById('email').focus();
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert('Password must be at least 6 characters', 'error');
+                document.getElementById('password').focus();
+                return;
+            }
+
+            if (!terms) {
+                showAlert('Please agree to the Terms of Service and Privacy Policy', 'error');
+                return;
+            }
+
+            // Set loading state
             setLoading(true);
             showAlert('', '');
 
             try {
-                const response = await fetch('/auth/register', {
+                // Register user
+                const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        email, 
-                        password, 
-                        fullName 
+                        full_name: fullName,
+                        email: email, 
+                        password: password
                     })
                 });
 
                 const data = await response.json();
 
                 if (data.status) {
-                    showAlert('Registration successful! Redirecting...', 'success');
-                    
-                    // Store token and user data
+                    // Store user data
                     localStorage.setItem('token', data.data.token);
                     localStorage.setItem('user', JSON.stringify(data.data.user));
+                    
+                    // Show API key modal
+                    showApiKeyModal(data.data.api_key);
+                    
+                    // Store API key in localStorage for immediate use
                     localStorage.setItem('apiKey', data.data.api_key);
-
-                    // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html';
-                    }, 1500);
+                    
+                    // Show success message
+                    showAlert('Registration successful! Your API key has been generated.', 'success');
                 } else {
-                    showAlert(data.message || 'Registration failed', 'error');
+                    // Handle specific errors
+                    if (data.message.includes('email')) {
+                        showAlert('Email already registered. Please use a different email or login.', 'error');
+                    } else {
+                        showAlert(data.message || 'Registration failed. Please try again.', 'error');
+                    }
                 }
             } catch (error) {
-                showAlert('Network error. Please try again.', 'error');
+                console.error('Registration error:', error);
+                
+                // Check for network errors
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    showAlert('Network error. Please check your internet connection and try again.', 'error');
+                } else {
+                    showAlert('An unexpected error occurred. Please try again later.', 'error');
+                }
             } finally {
                 setLoading(false);
             }
         });
+
+        // Auto-focus on first input
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fullName').focus();
+        });
+
+        // Close modal when clicking outside
+        apiKeyModal.addEventListener('click', (e) => {
+            if (e.target === apiKeyModal) {
+                hideApiKeyModal();
+                goToDashboard();
+            }
+        });
+
+        // Add animation for spinner
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
