@@ -538,6 +538,13 @@
             <button class="modal-btn" onclick="goToDashboard()">
                 <i class="ri-dashboard-line"></i> Go to Dashboard
             </button>
+            
+            <div class="modal-note" style="margin-top: 15px; background: #f0f9ff; border-color: #93c5fd;">
+                <p><i class="ri-information-line"></i> <strong>Next steps:</strong></p>
+                <p>• Your API key is automatically copied to clipboard</p>
+                <p>• Use this key in the <code>X-API-Key</code> header for API requests</p>
+                <p>• You can manage your API keys in the dashboard</p>
+            </div>
         </div>
     </div>
 
@@ -557,6 +564,7 @@
 
         // State
         let generatedApiKey = null;
+        let serverUrl = window.location.origin; // Automatically detect server URL
 
         // Show alert
         function showAlert(message, type) {
@@ -618,10 +626,18 @@
         });
 
         // Show API Key modal
-        function showApiKeyModal(apiKey) {
+        function showApiKeyModal(apiKey, userData) {
             generatedApiKey = apiKey;
             apiKeyValue.textContent = apiKey;
             apiKeyModal.classList.add('show');
+            
+            // Store data in localStorage
+            if (userData) {
+                localStorage.setItem('user', JSON.stringify(userData.user));
+                localStorage.setItem('token', userData.token);
+                localStorage.setItem('apiKey', apiKey);
+                localStorage.setItem('session_id', userData.session_id);
+            }
             
             // Auto-copy to clipboard
             setTimeout(() => {
@@ -650,6 +666,22 @@
                 }, 2000);
             }).catch(err => {
                 console.error('Failed to copy:', err);
+                // Fallback for browsers that don't support clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = generatedApiKey;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const copyBtn = document.querySelector('.copy-btn');
+                copyBtn.innerHTML = '<i class="ri-check-line"></i> Copied!';
+                copyBtn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="ri-file-copy-line"></i> Copy';
+                    copyBtn.style.background = '';
+                }, 2000);
             });
         }
 
@@ -662,6 +694,33 @@
         function validateEmail(email) {
             const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(email).toLowerCase());
+        }
+
+        // Check API server connection
+        async function checkServerConnection() {
+            try {
+                const response = await fetch(`${serverUrl}/auth/check`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.status === 404) {
+                    // Try without /auth prefix
+                    const response2 = await fetch(`${serverUrl}/check`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    return response2.ok;
+                }
+                
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
         }
 
         // Handle form submission
@@ -702,11 +761,25 @@
             showAlert('', '');
 
             try {
+                // Show connecting message
+                btnText.textContent = 'Connecting to server...';
+                
+                // Check server connection first
+                const isConnected = await checkServerConnection();
+                if (!isConnected) {
+                    showAlert('Cannot connect to server. Please make sure the server is running.', 'error');
+                    setLoading(false);
+                    return;
+                }
+
+                btnText.textContent = 'Creating account...';
+                
                 // Register user
-                const response = await fetch('/api/auth/register', {
+                const response = await fetch(`${serverUrl}/auth/register`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({ 
                         full_name: fullName,
@@ -717,35 +790,53 @@
 
                 const data = await response.json();
 
-                if (data.status) {
-                    // Store user data
-                    localStorage.setItem('token', data.data.token);
-                    localStorage.setItem('user', JSON.stringify(data.data.user));
+                if (response.ok && data.status) {
+                    // Registration successful
+                    showAlert('Registration successful! Your API key has been generated.', 'success');
                     
                     // Show API key modal
-                    showApiKeyModal(data.data.api_key);
+                    showApiKeyModal(data.data.api_key, {
+                        user: data.data.user,
+                        token: data.data.token,
+                        session_id: data.data.session_id
+                    });
                     
-                    // Store API key in localStorage for immediate use
+                    // Store all data in localStorage
+                    localStorage.setItem('user', JSON.stringify(data.data.user));
+                    localStorage.setItem('token', data.data.token);
                     localStorage.setItem('apiKey', data.data.api_key);
+                    localStorage.setItem('session_id', data.data.session_id);
                     
-                    // Show success message
-                    showAlert('Registration successful! Your API key has been generated.', 'success');
                 } else {
-                    // Handle specific errors
-                    if (data.message.includes('email')) {
+                    // Handle API errors
+                    if (response.status === 409 || data.message.includes('already registered')) {
                         showAlert('Email already registered. Please use a different email or login.', 'error');
+                    } else if (response.status === 400) {
+                        showAlert(data.message || 'Invalid input data. Please check your information.', 'error');
+                    } else if (response.status === 500) {
+                        showAlert('Server error. Please try again later.', 'error');
                     } else {
                         showAlert(data.message || 'Registration failed. Please try again.', 'error');
                     }
+                    
+                    // Debug info in console
+                    console.error('Registration failed:', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        data: data
+                    });
                 }
             } catch (error) {
                 console.error('Registration error:', error);
                 
                 // Check for network errors
                 if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                    showAlert('Network error. Please check your internet connection and try again.', 'error');
+                    showAlert('Cannot connect to server. Please check:', 'error');
+                    setTimeout(() => {
+                        showAlert(`1. Server URL: ${serverUrl}<br>2. Make sure server is running on port 8000<br>3. Check browser console for CORS errors`, 'error');
+                    }, 100);
                 } else {
-                    showAlert('An unexpected error occurred. Please try again later.', 'error');
+                    showAlert('An unexpected error occurred: ' + error.message, 'error');
                 }
             } finally {
                 setLoading(false);
@@ -755,6 +846,18 @@
         // Auto-focus on first input
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('fullName').focus();
+            
+            // Detect server URL
+            const currentUrl = window.location.href;
+            if (currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1')) {
+                serverUrl = 'http://localhost:8000';
+            } else if (currentUrl.includes('file://')) {
+                // If running as local file, default to localhost
+                serverUrl = 'http://localhost:8000';
+                showAlert('Running in local mode. Make sure server is running on http://localhost:8000', 'success');
+            }
+            
+            console.log('Server URL detected:', serverUrl);
         });
 
         // Close modal when clicking outside
@@ -762,6 +865,13 @@
             if (e.target === apiKeyModal) {
                 hideApiKeyModal();
                 goToDashboard();
+            }
+        });
+
+        // Add Enter key support for form submission
+        registerForm.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !registerBtn.disabled) {
+                registerForm.dispatchEvent(new Event('submit'));
             }
         });
 
