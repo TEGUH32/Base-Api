@@ -1,232 +1,284 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
 
 class Database {
     constructor() {
-        const dbPath = process.env.DB_PATH || path.join(__dirname, 'database.sqlite');
-        this.db = new sqlite3.Database(dbPath, (err) => {
-            if (err) {
-                console.error('Error opening database:', err);
-            } else {
-                console.log('Connected to SQLite database');
-                this.initializeTables();
-            }
+        const connectionString = process.env.DATABASE_URL || process.env.NEON_URL;
+        
+        if (!connectionString) {
+            throw new Error('DATABASE_URL environment variable is required');
+        }
+
+        this.pool = new Pool({
+            connectionString: connectionString,
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+            max: 20, // Maximum number of clients in the pool
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 2000,
         });
+
+        this.pool.on('connect', () => {
+            console.log('Connected to PostgreSQL database');
+        });
+
+        this.pool.on('error', (err) => {
+            console.error('Unexpected error on idle client', err);
+        });
+
+        // Initialize database
+        this.initializeTables();
     }
 
-    initializeTables() {
-        // Users table
-        this.db.run(`
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                full_name TEXT,
-                plan TEXT DEFAULT 'free',
-                is_verified BOOLEAN DEFAULT 0,
-                is_active BOOLEAN DEFAULT 1,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
+    async initializeTables() {
+        try {
+            // Enable UUID extension
+            await this.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+            
+            // Users table
+            await this.query(`
+                CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    email VARCHAR(255) UNIQUE NOT NULL,
+                    password VARCHAR(255) NOT NULL,
+                    full_name VARCHAR(255),
+                    plan VARCHAR(50) DEFAULT 'free',
+                    is_verified BOOLEAN DEFAULT false,
+                    is_active BOOLEAN DEFAULT true,
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                )
+            `);
 
-        // API Keys table
-        this.db.run(`
-            CREATE TABLE IF NOT EXISTS api_keys (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                key_value TEXT UNIQUE NOT NULL,
-                name TEXT,
-                is_active BOOLEAN DEFAULT 1,
-                daily_limit INTEGER DEFAULT 100,
-                requests_today INTEGER DEFAULT 0,
-                last_reset_date DATE DEFAULT CURRENT_DATE,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                expires_at DATETIME,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )
-        `);
+            // API Keys table
+            await this.query(`
+                CREATE TABLE IF NOT EXISTS api_keys (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    key_value VARCHAR(255) UNIQUE NOT NULL,
+                    name VARCHAR(255),
+                    is_active BOOLEAN DEFAULT true,
+                    daily_limit INTEGER DEFAULT 100,
+                    requests_today INTEGER DEFAULT 0,
+                    last_reset_date DATE DEFAULT CURRENT_DATE,
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                    expires_at TIMESTAMP WITH TIME ZONE,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+            `);
 
-        // Transactions table
-        this.db.run(`
-            CREATE TABLE IF NOT EXISTS transactions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                transaction_id TEXT UNIQUE NOT NULL,
-                order_id TEXT,
-                gross_amount REAL NOT NULL,
-                status TEXT DEFAULT 'pending',
-                payment_type TEXT,
-                plan TEXT,
-                payment_date DATETIME,
-                fraud_status TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )
-        `);
+            // Transactions table
+            await this.query(`
+                CREATE TABLE IF NOT EXISTS transactions (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    transaction_id VARCHAR(255) UNIQUE NOT NULL,
+                    order_id VARCHAR(255),
+                    gross_amount DECIMAL(10, 2) NOT NULL,
+                    status VARCHAR(50) DEFAULT 'pending',
+                    payment_type VARCHAR(100),
+                    plan VARCHAR(50),
+                    payment_date TIMESTAMP WITH TIME ZONE,
+                    fraud_status VARCHAR(50),
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+            `);
 
-        // Usage tracking table
-        this.db.run(`
-            CREATE TABLE IF NOT EXISTS usage_logs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                api_key_id INTEGER NOT NULL,
-                endpoint TEXT NOT NULL,
-                status_code INTEGER,
-                response_time INTEGER,
-                ip_address TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                FOREIGN KEY (api_key_id) REFERENCES api_keys(id) ON DELETE CASCADE
-            )
-        `);
+            // Usage tracking table
+            await this.query(`
+                CREATE TABLE IF NOT EXISTS usage_logs (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    api_key_id INTEGER NOT NULL,
+                    endpoint VARCHAR(255) NOT NULL,
+                    status_code INTEGER,
+                    response_time INTEGER,
+                    ip_address VARCHAR(45),
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY (api_key_id) REFERENCES api_keys(id) ON DELETE CASCADE
+                )
+            `);
 
-        // Pricing plans table
-        this.db.run(`
-            CREATE TABLE IF NOT EXISTS pricing_plans (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT UNIQUE NOT NULL,
-                price INTEGER NOT NULL,
-                daily_limit INTEGER NOT NULL,
-                monthly_limit INTEGER NOT NULL,
-                features TEXT,
-                is_active BOOLEAN DEFAULT 1,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-        `, () => {
-            this.insertDefaultPlans();
-        });
+            // Pricing plans table
+            await this.query(`
+                CREATE TABLE IF NOT EXISTS pricing_plans (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(255) UNIQUE NOT NULL,
+                    price INTEGER NOT NULL,
+                    daily_limit INTEGER NOT NULL,
+                    monthly_limit INTEGER NOT NULL,
+                    features TEXT,
+                    is_active BOOLEAN DEFAULT true,
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                )
+            `);
 
-        // Sessions table
-        this.db.run(`
-            CREATE TABLE IF NOT EXISTS sessions (
-                id TEXT PRIMARY KEY,
-                user_id INTEGER NOT NULL,
-                ip_address TEXT,
-                user_agent TEXT,
-                expires_at DATETIME NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )
-        `);
+            // Sessions table
+            await this.query(`
+                CREATE TABLE IF NOT EXISTS sessions (
+                    id VARCHAR(255) PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    ip_address VARCHAR(45),
+                    user_agent TEXT,
+                    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+            `);
 
-        console.log('Database tables initialized');
+            await this.insertDefaultPlans();
+            console.log('Database tables initialized successfully');
+        } catch (error) {
+            console.error('Error initializing database tables:', error);
+        }
     }
 
-    insertDefaultPlans() {
-        const plans = [
-            {
-                name: 'free',
-                price: 0,
-                daily_limit: 100,
-                monthly_limit: 3000,
-                features: JSON.stringify(['100 requests/day', 'Basic support', 'Rate limiting'])
-            },
-            {
-                name: 'basic',
-                price: 49000,
-                daily_limit: 1000,
-                monthly_limit: 30000,
-                features: JSON.stringify(['1000 requests/day', 'Priority support', 'Faster response', 'Rate limiting'])
-            },
-            {
-                name: 'pro',
-                price: 99000,
-                daily_limit: 5000,
-                monthly_limit: 150000,
-                features: JSON.stringify(['5000 requests/day', '24/7 support', 'Fastest response', 'Advanced analytics', 'Rate limiting'])
-            },
-            {
-                name: 'enterprise',
-                price: 249000,
-                daily_limit: 99999,
-                monthly_limit: 999999,
-                features: JSON.stringify(['Unlimited requests', 'Dedicated support', 'Custom integration', 'Advanced analytics', 'Priority queue', 'Rate limiting'])
-            }
-        ];
+    async insertDefaultPlans() {
+        try {
+            const plans = [
+                {
+                    name: 'free',
+                    price: 0,
+                    daily_limit: 100,
+                    monthly_limit: 3000,
+                    features: JSON.stringify(['100 requests/day', 'Basic support', 'Rate limiting'])
+                },
+                {
+                    name: 'basic',
+                    price: 49000,
+                    daily_limit: 1000,
+                    monthly_limit: 30000,
+                    features: JSON.stringify(['1000 requests/day', 'Priority support', 'Faster response', 'Rate limiting'])
+                },
+                {
+                    name: 'pro',
+                    price: 99000,
+                    daily_limit: 5000,
+                    monthly_limit: 150000,
+                    features: JSON.stringify(['5000 requests/day', '24/7 support', 'Fastest response', 'Advanced analytics', 'Rate limiting'])
+                },
+                {
+                    name: 'enterprise',
+                    price: 249000,
+                    daily_limit: 99999,
+                    monthly_limit: 999999,
+                    features: JSON.stringify(['Unlimited requests', 'Dedicated support', 'Custom integration', 'Advanced analytics', 'Priority queue', 'Rate limiting'])
+                }
+            ];
 
-        plans.forEach(plan => {
-            this.db.run(
-                `INSERT OR IGNORE INTO pricing_plans (name, price, daily_limit, monthly_limit, features) VALUES (?, ?, ?, ?, ?)`,
-                [plan.name, plan.price, plan.daily_limit, plan.monthly_limit, plan.features]
-            );
-        });
+            for (const plan of plans) {
+                await this.query(
+                    `INSERT INTO pricing_plans (name, price, daily_limit, monthly_limit, features) 
+                     VALUES ($1, $2, $3, $4, $5) 
+                     ON CONFLICT (name) DO NOTHING`,
+                    [plan.name, plan.price, plan.daily_limit, plan.monthly_limit, plan.features]
+                );
+            }
+        } catch (error) {
+            console.error('Error inserting default plans:', error);
+        }
+    }
+
+    async query(text, params) {
+        const client = await this.pool.connect();
+        try {
+            const result = await client.query(text, params);
+            return result;
+        } catch (error) {
+            console.error('Database query error:', error);
+            throw error;
+        } finally {
+            client.release();
+        }
     }
 
     // User methods
     async createUser(email, password, fullName) {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        return new Promise((resolve, reject) => {
-            this.db.run(
-                `INSERT INTO users (email, password, full_name) VALUES (?, ?, ?)`,
-                [email, hashedPassword, fullName],
-                function(err) {
-                    if (err) reject(err);
-                    else resolve({ id: this.lastID, email, fullName });
-                }
+        try {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const result = await this.query(
+                `INSERT INTO users (email, password, full_name) 
+                 VALUES ($1, $2, $3) 
+                 RETURNING id, email, full_name, created_at`,
+                [email, hashedPassword, fullName]
             );
-        });
+            return {
+                id: result.rows[0].id,
+                email: result.rows[0].email,
+                fullName: result.rows[0].full_name,
+                createdAt: result.rows[0].created_at
+            };
+        } catch (error) {
+            console.error('Error creating user:', error);
+            throw error;
+        }
     }
 
     async findUserByEmail(email) {
-        return new Promise((resolve, reject) => {
-            this.db.get(
-                `SELECT * FROM users WHERE email = ?`,
-                [email],
-                (err, row) => {
-                    if (err) reject(err);
-                    else resolve(row);
-                }
+        try {
+            const result = await this.query(
+                `SELECT * FROM users WHERE email = $1`,
+                [email]
             );
-        });
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error finding user by email:', error);
+            throw error;
+        }
     }
 
     async findUserById(id) {
-        return new Promise((resolve, reject) => {
-            this.db.get(
-                `SELECT * FROM users WHERE id = ?`,
-                [id],
-                (err, row) => {
-                    if (err) reject(err);
-                    else resolve(row);
-                }
+        try {
+            const result = await this.query(
+                `SELECT * FROM users WHERE id = $1`,
+                [id]
             );
-        });
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error finding user by id:', error);
+            throw error;
+        }
     }
 
     async updateUserPlan(userId, plan) {
-        return new Promise((resolve, reject) => {
-            this.db.run(
-                `UPDATE users SET plan = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
-                [plan, userId],
-                function(err) {
-                    if (err) reject(err);
-                    else resolve(this.changes);
-                }
+        try {
+            const result = await this.query(
+                `UPDATE users 
+                 SET plan = $1, updated_at = CURRENT_TIMESTAMP 
+                 WHERE id = $2 
+                 RETURNING *`,
+                [plan, userId]
             );
-        });
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error updating user plan:', error);
+            throw error;
+        }
     }
 
     // API Key methods
     async createApiKey(userId, name, expiresIn = 365) {
-        const keyValue = 'api_' + require('crypto').randomBytes(32).toString('hex');
-        const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + expiresIn);
+        try {
+            const keyValue = 'api_' + require('crypto').randomBytes(32).toString('hex');
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + expiresIn);
 
-        const user = await this.findUserById(userId);
-        const dailyLimit = this.getDailyLimitForPlan(user.plan);
+            const user = await this.findUserById(userId);
+            const dailyLimit = this.getDailyLimitForPlan(user.plan);
 
-        return new Promise((resolve, reject) => {
-            this.db.run(
-                `INSERT INTO api_keys (user_id, key_value, name, daily_limit, expires_at) VALUES (?, ?, ?, ?, ?)`,
-                [userId, keyValue, name, dailyLimit, expiresAt.toISOString()],
-                function(err) {
-                    if (err) reject(err);
-                    else resolve({ id: this.lastID, key_value: keyValue, name, expires_at: expiresAt });
-                }
+            const result = await this.query(
+                `INSERT INTO api_keys (user_id, key_value, name, daily_limit, expires_at) 
+                 VALUES ($1, $2, $3, $4, $5) 
+                 RETURNING *`,
+                [userId, keyValue, name, dailyLimit, expiresAt.toISOString()]
             );
-        });
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error creating API key:', error);
+            throw error;
+        }
     }
 
     getDailyLimitForPlan(plan) {
@@ -240,297 +292,312 @@ class Database {
     }
 
     async findApiKey(keyValue) {
-        return new Promise((resolve, reject) => {
-            this.db.get(
-                `SELECT * FROM api_keys WHERE key_value = ? AND is_active = 1`,
-                [keyValue],
-                (err, row) => {
-                    if (err) reject(err);
-                    else resolve(row);
-                }
+        try {
+            const result = await this.query(
+                `SELECT * FROM api_keys 
+                 WHERE key_value = $1 AND is_active = true`,
+                [keyValue]
             );
-        });
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error finding API key:', error);
+            throw error;
+        }
     }
 
     async checkAndUpdateApiKeyUsage(apiKeyId) {
-        return new Promise((resolve, reject) => {
+        const client = await this.pool.connect();
+        try {
+            await client.query('BEGIN');
+
             // Check if we need to reset the daily counter
-            this.db.run(
+            await client.query(
                 `UPDATE api_keys 
                  SET requests_today = CASE 
-                     WHEN date(last_reset_date) < date('now') THEN 0 
+                     WHEN last_reset_date < CURRENT_DATE THEN 0 
                      ELSE requests_today 
                  END,
                  last_reset_date = CASE 
-                     WHEN date(last_reset_date) < date('now') THEN date('now') 
+                     WHEN last_reset_date < CURRENT_DATE THEN CURRENT_DATE 
                      ELSE last_reset_date 
                  END
-                 WHERE id = ?`,
-                [apiKeyId],
-                (err) => {
-                    if (err) {
-                        reject(err);
-                        return;
-                    }
-
-                    // Get the current usage and limit
-                    this.db.get(
-                        `SELECT requests_today, daily_limit FROM api_keys WHERE id = ?`,
-                        [apiKeyId],
-                        (err, row) => {
-                            if (err) {
-                                reject(err);
-                                return;
-                            }
-
-                            if (!row) {
-                                reject(new Error('API key not found'));
-                                return;
-                            }
-
-                            const hasLimit = row.requests_today < row.daily_limit;
-
-                            if (hasLimit) {
-                                // Increment the counter
-                                this.db.run(
-                                    `UPDATE api_keys SET requests_today = requests_today + 1 WHERE id = ?`,
-                                    [apiKeyId],
-                                    (err) => {
-                                        if (err) reject(err);
-                                        else resolve({
-                                            allowed: true,
-                                            remaining: row.daily_limit - row.requests_today - 1,
-                                            limit: row.daily_limit
-                                        });
-                                    }
-                                );
-                            } else {
-                                resolve({
-                                    allowed: false,
-                                    remaining: 0,
-                                    limit: row.daily_limit
-                                });
-                            }
-                        }
-                    );
-                }
+                 WHERE id = $1`,
+                [apiKeyId]
             );
-        });
+
+            // Get the current usage and limit
+            const usageResult = await client.query(
+                `SELECT requests_today, daily_limit FROM api_keys WHERE id = $1`,
+                [apiKeyId]
+            );
+
+            if (usageResult.rows.length === 0) {
+                throw new Error('API key not found');
+            }
+
+            const row = usageResult.rows[0];
+            const hasLimit = row.requests_today < row.daily_limit;
+
+            if (hasLimit) {
+                // Increment the counter
+                await client.query(
+                    `UPDATE api_keys SET requests_today = requests_today + 1 WHERE id = $1`,
+                    [apiKeyId]
+                );
+
+                await client.query('COMMIT');
+                return {
+                    allowed: true,
+                    remaining: row.daily_limit - row.requests_today - 1,
+                    limit: row.daily_limit
+                };
+            } else {
+                await client.query('COMMIT');
+                return {
+                    allowed: false,
+                    remaining: 0,
+                    limit: row.daily_limit
+                };
+            }
+        } catch (error) {
+            await client.query('ROLLBACK');
+            console.error('Error checking API key usage:', error);
+            throw error;
+        } finally {
+            client.release();
+        }
     }
 
     async getUserApiKeys(userId) {
-        return new Promise((resolve, reject) => {
-            this.db.all(
-                `SELECT id, key_value, name, is_active, daily_limit, requests_today, last_reset_date, created_at, expires_at 
+        try {
+            const result = await this.query(
+                `SELECT id, key_value, name, is_active, daily_limit, 
+                        requests_today, last_reset_date, created_at, expires_at 
                  FROM api_keys 
-                 WHERE user_id = ? 
+                 WHERE user_id = $1 
                  ORDER BY created_at DESC`,
-                [userId],
-                (err, rows) => {
-                    if (err) reject(err);
-                    else resolve(rows);
-                }
+                [userId]
             );
-        });
+            return result.rows;
+        } catch (error) {
+            console.error('Error getting user API keys:', error);
+            throw error;
+        }
     }
 
     async deleteApiKey(keyId, userId) {
-        return new Promise((resolve, reject) => {
-            this.db.run(
-                `DELETE FROM api_keys WHERE id = ? AND user_id = ?`,
-                [keyId, userId],
-                function(err) {
-                    if (err) reject(err);
-                    else resolve(this.changes);
-                }
+        try {
+            const result = await this.query(
+                `DELETE FROM api_keys WHERE id = $1 AND user_id = $2 RETURNING id`,
+                [keyId, userId]
             );
-        });
+            return result.rowCount;
+        } catch (error) {
+            console.error('Error deleting API key:', error);
+            throw error;
+        }
     }
 
     // Transaction methods
     async createTransaction(userId, transactionId, orderId, grossAmount, plan) {
-        return new Promise((resolve, reject) => {
-            this.db.run(
-                `INSERT INTO transactions (user_id, transaction_id, order_id, gross_amount, plan) VALUES (?, ?, ?, ?, ?)`,
-                [userId, transactionId, orderId, grossAmount, plan],
-                function(err) {
-                    if (err) reject(err);
-                    else resolve({ id: this.lastID });
-                }
+        try {
+            const result = await this.query(
+                `INSERT INTO transactions (user_id, transaction_id, order_id, gross_amount, plan) 
+                 VALUES ($1, $2, $3, $4, $5) 
+                 RETURNING id`,
+                [userId, transactionId, orderId, grossAmount, plan]
             );
-        });
+            return { id: result.rows[0].id };
+        } catch (error) {
+            console.error('Error creating transaction:', error);
+            throw error;
+        }
     }
 
     async updateTransactionStatus(transactionId, status, paymentData = {}) {
-        return new Promise((resolve, reject) => {
-            this.db.run(
+        try {
+            const result = await this.query(
                 `UPDATE transactions 
-                 SET status = ?, payment_type = ?, payment_date = ?, fraud_status = ? 
-                 WHERE transaction_id = ?`,
+                 SET status = $1, 
+                     payment_type = $2, 
+                     payment_date = $3, 
+                     fraud_status = $4 
+                 WHERE transaction_id = $5 
+                 RETURNING *`,
                 [
                     status,
                     paymentData.payment_type || null,
                     paymentData.payment_date || null,
                     paymentData.fraud_status || null,
                     transactionId
-                ],
-                function(err) {
-                    if (err) reject(err);
-                    else resolve(this.changes);
-                }
+                ]
             );
-        });
+            return result.rowCount;
+        } catch (error) {
+            console.error('Error updating transaction status:', error);
+            throw error;
+        }
     }
 
     async getUserTransactions(userId, limit = 20) {
-        return new Promise((resolve, reject) => {
-            this.db.all(
+        try {
+            const result = await this.query(
                 `SELECT * FROM transactions 
-                 WHERE user_id = ? 
+                 WHERE user_id = $1 
                  ORDER BY created_at DESC 
-                 LIMIT ?`,
-                [userId, limit],
-                (err, rows) => {
-                    if (err) reject(err);
-                    else resolve(rows);
-                }
+                 LIMIT $2`,
+                [userId, limit]
             );
-        });
+            return result.rows;
+        } catch (error) {
+            console.error('Error getting user transactions:', error);
+            throw error;
+        }
     }
 
     // Usage tracking
     async logUsage(userId, apiKeyId, endpoint, statusCode, responseTime, ipAddress) {
-        return new Promise((resolve, reject) => {
-            this.db.run(
+        try {
+            const result = await this.query(
                 `INSERT INTO usage_logs (user_id, api_key_id, endpoint, status_code, response_time, ip_address) 
-                 VALUES (?, ?, ?, ?, ?, ?)`,
-                [userId, apiKeyId, endpoint, statusCode, responseTime, ipAddress],
-                function(err) {
-                    if (err) reject(err);
-                    else resolve(this.lastID);
-                }
+                 VALUES ($1, $2, $3, $4, $5, $6) 
+                 RETURNING id`,
+                [userId, apiKeyId, endpoint, statusCode, responseTime, ipAddress]
             );
-        });
+            return result.rows[0].id;
+        } catch (error) {
+            console.error('Error logging usage:', error);
+            throw error;
+        }
     }
 
     async getUserUsageStats(userId, days = 7) {
-        return new Promise((resolve, reject) => {
+        try {
             const startDate = new Date();
             startDate.setDate(startDate.getDate() - days);
 
-            this.db.all(
+            const result = await this.query(
                 `SELECT 
                     DATE(created_at) as date,
                     COUNT(*) as total_requests,
                     AVG(response_time) as avg_response_time,
                     SUM(CASE WHEN status_code >= 400 THEN 1 ELSE 0 END) as error_count
                  FROM usage_logs 
-                 WHERE user_id = ? AND created_at >= ?
+                 WHERE user_id = $1 AND created_at >= $2
                  GROUP BY DATE(created_at)
                  ORDER BY date DESC`,
-                [userId, startDate.toISOString()],
-                (err, rows) => {
-                    if (err) reject(err);
-                    else resolve(rows);
-                }
+                [userId, startDate.toISOString()]
             );
-        });
+            return result.rows;
+        } catch (error) {
+            console.error('Error getting user usage stats:', error);
+            throw error;
+        }
     }
 
     // Pricing plans
     async getActivePlans() {
-        return new Promise((resolve, reject) => {
-            this.db.all(
-                `SELECT * FROM pricing_plans WHERE is_active = 1 ORDER BY price ASC`,
-                [],
-                (err, rows) => {
-                    if (err) reject(err);
-                    else resolve(rows.map(row => ({
-                        ...row,
-                        features: JSON.parse(row.features)
-                    })));
-                }
+        try {
+            const result = await this.query(
+                `SELECT * FROM pricing_plans 
+                 WHERE is_active = true 
+                 ORDER BY price ASC`
             );
-        });
+            return result.rows.map(row => ({
+                ...row,
+                features: row.features ? JSON.parse(row.features) : []
+            }));
+        } catch (error) {
+            console.error('Error getting active plans:', error);
+            throw error;
+        }
     }
 
     async getPlanByName(planName) {
-        return new Promise((resolve, reject) => {
-            this.db.get(
-                `SELECT * FROM pricing_plans WHERE name = ?`,
-                [planName],
-                (err, row) => {
-                    if (err) reject(err);
-                    else resolve(row ? { ...row, features: JSON.parse(row.features) } : null);
-                }
+        try {
+            const result = await this.query(
+                `SELECT * FROM pricing_plans WHERE name = $1`,
+                [planName]
             );
-        });
+            if (result.rows[0]) {
+                return {
+                    ...result.rows[0],
+                    features: result.rows[0].features ? JSON.parse(result.rows[0].features) : []
+                };
+            }
+            return null;
+        } catch (error) {
+            console.error('Error getting plan by name:', error);
+            throw error;
+        }
     }
 
     // Session management
     async createSession(sessionId, userId, ipAddress, userAgent, expiresIn = '7d') {
-        const expiresAt = new Date();
-        const expiresInSeconds = expiresIn === '7d' ? 7 * 24 * 60 * 60 : 24 * 60 * 60;
-        expiresAt.setSeconds(expiresAt.getSeconds() + expiresInSeconds);
+        try {
+            const expiresAt = new Date();
+            const expiresInSeconds = expiresIn === '7d' ? 7 * 24 * 60 * 60 : 24 * 60 * 60;
+            expiresAt.setSeconds(expiresAt.getSeconds() + expiresInSeconds);
 
-        return new Promise((resolve, reject) => {
-            this.db.run(
-                `INSERT INTO sessions (id, user_id, ip_address, user_agent, expires_at) VALUES (?, ?, ?, ?, ?)`,
-                [sessionId, userId, ipAddress, userAgent, expiresAt.toISOString()],
-                function(err) {
-                    if (err) reject(err);
-                    else resolve({ id: sessionId, expires_at: expiresAt });
-                }
+            const result = await this.query(
+                `INSERT INTO sessions (id, user_id, ip_address, user_agent, expires_at) 
+                 VALUES ($1, $2, $3, $4, $5) 
+                 RETURNING *`,
+                [sessionId, userId, ipAddress, userAgent, expiresAt.toISOString()]
             );
-        });
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error creating session:', error);
+            throw error;
+        }
     }
 
     async findSession(sessionId) {
-        return new Promise((resolve, reject) => {
-            this.db.get(
-                `SELECT * FROM sessions WHERE id = ? AND expires_at > CURRENT_TIMESTAMP`,
-                [sessionId],
-                (err, row) => {
-                    if (err) reject(err);
-                    else resolve(row);
-                }
+        try {
+            const result = await this.query(
+                `SELECT * FROM sessions 
+                 WHERE id = $1 AND expires_at > CURRENT_TIMESTAMP`,
+                [sessionId]
             );
-        });
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error finding session:', error);
+            throw error;
+        }
     }
 
     async deleteSession(sessionId) {
-        return new Promise((resolve, reject) => {
-            this.db.run(
-                `DELETE FROM sessions WHERE id = ?`,
-                [sessionId],
-                function(err) {
-                    if (err) reject(err);
-                    else resolve(this.changes);
-                }
+        try {
+            const result = await this.query(
+                `DELETE FROM sessions WHERE id = $1 RETURNING id`,
+                [sessionId]
             );
-        });
+            return result.rowCount;
+        } catch (error) {
+            console.error('Error deleting session:', error);
+            throw error;
+        }
     }
 
     async cleanupExpiredSessions() {
-        return new Promise((resolve, reject) => {
-            this.db.run(
-                `DELETE FROM sessions WHERE expires_at < CURRENT_TIMESTAMP`,
-                function(err) {
-                    if (err) reject(err);
-                    else resolve(this.changes);
-                }
+        try {
+            const result = await this.query(
+                `DELETE FROM sessions WHERE expires_at < CURRENT_TIMESTAMP RETURNING id`
             );
-        });
+            return result.rowCount;
+        } catch (error) {
+            console.error('Error cleaning up expired sessions:', error);
+            throw error;
+        }
     }
 
-    close() {
-        this.db.close((err) => {
-            if (err) {
-                console.error('Error closing database:', err);
-            } else {
-                console.log('Database connection closed');
-            }
-        });
+    async close() {
+        try {
+            await this.pool.end();
+            console.log('Database connection pool closed');
+        } catch (error) {
+            console.error('Error closing database connection pool:', error);
+        }
     }
 }
 
